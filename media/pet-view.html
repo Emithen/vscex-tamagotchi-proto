@@ -38,6 +38,18 @@
         background: var(--vscode-button-background);
       }
 
+      .hunger-bar__fill--0 { width: 0%; }
+      .hunger-bar__fill--1 { width: 10%; }
+      .hunger-bar__fill--2 { width: 20%; }
+      .hunger-bar__fill--3 { width: 30%; }
+      .hunger-bar__fill--4 { width: 40%; }
+      .hunger-bar__fill--5 { width: 50%; }
+      .hunger-bar__fill--6 { width: 60%; }
+      .hunger-bar__fill--7 { width: 70%; }
+      .hunger-bar__fill--8 { width: 80%; }
+      .hunger-bar__fill--9 { width: 90%; }
+      .hunger-bar__fill--10 { width: 100%; }
+
       .feed-button {
         width: calc(100% - 32px);
         margin: 0 16px;
@@ -56,20 +68,22 @@
     </style>
   </head>
   <body>
-    <img class="pet-image" src="{{petImageUri}}" alt="물쐉이" />
+    <img class="pet-image" src="{{petImageUri}}" alt="{{petName}}" />
 
-    <h2>물쐉이</h2>
+    <h2>{{petName}}</h2>
 
-    <p class="hunger">배고픔: 10 / 10</p>
+    <p class="hunger">배고픔: {{hunger}} / 10</p>
     <div
       class="hunger-bar"
       role="progressbar"
       aria-label="배고픔"
       aria-valuemin="0"
       aria-valuemax="10"
-      aria-valuenow="10"
+      aria-valuenow="{{hunger}}"
     >
-      <div class="hunger-bar__fill"></div>
+      <div
+        class="hunger-bar__fill {{hungerClass}}"
+      ></div>
     </div>
 
     <button class="feed-button" type="button">먹이 주기</button>
