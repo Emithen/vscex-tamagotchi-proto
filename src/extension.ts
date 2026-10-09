@@ -1,17 +1,24 @@
 import * as vscode from 'vscode';
 
 const PET_STATE_KEY = 'tamagotchi.petState';
+const DEFAULT_FULLNESS = 5;
+const MIN_FULLNESS = 0;
+const MAX_FULLNESS = 10;
 
 type PetState = {
 	name: string;
-	hunger: number;
+	fullness: number;
 	updatedAt: number;
+};
+
+function clampFullness(fullness: number): number {
+	return Math.min(MAX_FULLNESS, Math.max(MIN_FULLNESS, fullness));
 }
 
 function createInitialPetState(): PetState {
 	return {
 		name: '물짱이',
-		hunger: 5,
+		fullness: DEFAULT_FULLNESS,
 		updatedAt: Date.now(),
 	};
 }
@@ -84,6 +91,27 @@ class TamagotchiViewProvider implements vscode.WebviewViewProvider {
 			webviewView.webview,
 			petState,
 		);
+
+		webviewView.webview.onDidReceiveMessage(async (message) => {
+			if (message.type !== 'feed') {
+				return;
+			}
+
+			const currentState = await this.petStateStore.load();
+
+			const nextState: PetState = {
+				...currentState,
+				fullness: clampFullness(currentState.fullness + 1),
+				updatedAt: Date.now(),
+			};
+
+			await this.petStateStore.save(nextState);
+
+			webviewView.webview.html = await this.getHtml(
+				webviewView.webview,
+				nextState,
+			);
+		});
 	};
 
 	private async getHtml(
@@ -103,13 +131,13 @@ class TamagotchiViewProvider implements vscode.WebviewViewProvider {
 		const templateBytes = await vscode.workspace.fs.readFile(templateUri);
 		const template = new TextDecoder().decode(templateBytes);
 
-		const hunger = Math.min(10, Math.max(0, petState.hunger));
-		const hungerClass = `hunger-bar__fill--${hunger}`;
+		const fullness = clampFullness(petState.fullness);
+		const fullnessClass = `fullness-bar__fill--${fullness}`;
 
 		return template
 			.replace('{{petImageUri}}', petImageUri.toString())
 			.replaceAll('{{petName}}', petState.name)
-			.replaceAll('{{hunger}}', String(hunger))
-			.replace('{{hungerClass}}', hungerClass);
+			.replaceAll('{{fullness}}', String(fullness))
+			.replace('{{fullnessClass}}', fullnessClass);
 	}
 }

@@ -17,6 +17,9 @@ importers:
       '@types/vscode':
         specifier: ^1.140.0
         version: 1.140.0
+      '@types/vscode-webview':
+        specifier: ^1.57.5
+        version: 1.57.5
       '@vscode/test-cli':
         specifier: ^0.0.15
         version: 0.0.15
@@ -143,6 +146,9 @@ packages:
 
   '@types/node@24.19.1':
     resolution: {integrity: sha512-aS3/DG0oM05K0RIXXP+hKjinGG5IgSSVGzswZxW3O0sS3pH4/fycXundUC9XsszgKCk4gHXylTEK6hyFxVxnoQ==}
+
+  '@types/vscode-webview@1.57.5':
+    resolution: {integrity: sha512-iBAUYNYkz+uk1kdsq05fEcoh8gJmwT3lqqFPN7MGyjQ3HVloViMdo7ZJ8DFIP8WOK74PjOEilosqAyxV2iUFUw==}
 
   '@types/vscode@1.140.0':
     resolution: {integrity: sha512-KAB5RBZIgnUhpp4mKsVJPPHLOQKu6WtGy2xpfWjaajEXO4xIIC+UESAXLiQ9ewx6QD1uBmvC/S8BJzkbvv4bRA==}
@@ -1027,6 +1033,8 @@ snapshots:
   '@types/node@24.19.1':
     dependencies:
       undici-types: 7.24.6
+
+  '@types/vscode-webview@1.57.5': {}
 
   '@types/vscode@1.140.0': {}
 
