@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+        http-equiv="Content-Security-Policy"
+        content="{{contentSecurityPolicy}}"
+    />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <link rel="stylesheet" href="{{styleUri}}" />
+  </head>
+
+  <body>
+    <img
+        class="pet-image"
+        src="{{petImageUri}}"
+        alt="{{petName}}"
+    />
+
+    <h2>{{petName}}</h2>
+
+    <p class="fullness">포만감: {{fullness}} / 10</p>
+
+    <div
+      class="fullness-bar"
+      role="progressbar"
+      aria-label="포만감"
+      aria-valuemin="0"
+      aria-valuemax="10"
+      aria-valuenow="{{fullness}}"
+    >
+      <div
+        class="fullness-bar__fill {{fullnessClass}}"
+      ></div>
+    </div>
+
+    <button class="feed-button" type="button">먹이 주기</button>
+
+    <script nonce="{{nonce}}" src="{{scriptUri}}"></script>
+  </body>
+</html>
