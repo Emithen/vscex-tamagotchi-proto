@@ -38,9 +38,10 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint src",
+    "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\"",
     "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\""
+    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
+    "test": "vscode-test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

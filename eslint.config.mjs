@@ -1,10 +1,15 @@
 import typescriptEslint from 'typescript-eslint';
 
+const commonRules = {
+  curly: 'error',
+  eqeqeq: 'error',
+  'no-throw-literal': 'error',
+};
+
 export default [
   {
-    files: ['**/*.ts'],
-  },
-  {
+    files: ['src/**/*.ts'],
+
     plugins: {
       '@typescript-eslint': typescriptEslint.plugin,
     },
@@ -16,6 +21,18 @@ export default [
     },
 
     rules: {
+      ...commonRules,
+
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+
       '@typescript-eslint/naming-convention': [
         'warn',
         {
@@ -23,11 +40,25 @@ export default [
           format: ['camelCase', 'PascalCase'],
         },
       ],
+    },
+  },
 
-      curly: 'warn',
-      eqeqeq: 'warn',
-      'no-throw-literal': 'warn',
-      semi: 'warn',
+  {
+    files: ['media/pet-view/**/*.js'],
+
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'script',
+      globals: {
+        acquireVsCodeApi: 'readonly',
+        document: 'readonly',
+      },
+    },
+
+    rules: {
+      ...commonRules,
+      'no-undef': 'error',
+      'no-unused-vars': 'error',
     },
   },
 ];
