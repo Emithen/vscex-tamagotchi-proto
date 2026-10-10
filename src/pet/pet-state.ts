@@ -3,21 +3,21 @@ export const MIN_FULLNESS = 0;
 export const MAX_FULLNESS = 10;
 
 export type PetState = {
-	name: string;
-	fullness: number;
-	updatedAt: number;
+  name: string;
+  fullness: number;
+  updatedAt: number;
 };
 
 export function createInitialPetState(): PetState {
-	return {
-		name: '물짱이',
-		fullness: DEFAULT_FULLNESS,
-		updatedAt: Date.now(),
-	};
+  return {
+    name: '물짱이',
+    fullness: DEFAULT_FULLNESS,
+    updatedAt: Date.now(),
+  };
 }
 
 export function clampFullness(fullness: number): number {
-    return Math.min(MAX_FULLNESS, Math.max(MIN_FULLNESS, fullness));
+  return Math.min(MAX_FULLNESS, Math.max(MIN_FULLNESS, fullness));
 }
 
 /**
@@ -29,13 +29,10 @@ export function clampFullness(fullness: number): number {
  * @param now 갱신 시각. 생략하면 현재 시각을 사용한다.
  * @returns 먹이를 준 이후의 새로운 펫 상태
  */
-export function feedPet(
-    state: PetState,
-    now = Date.now(),
-): PetState {
-    return {
-        ...state,
-        fullness: clampFullness(state.fullness + 1),
-        updatedAt: now,
-    };
+export function feedPet(state: PetState, now = Date.now()): PetState {
+  return {
+    ...state,
+    fullness: clampFullness(state.fullness + 1),
+    updatedAt: now,
+  };
 }
