@@ -3,6 +3,7 @@ import {
   DEFAULT_FULLNESS,
   MAX_FULLNESS,
   createInitialPetState,
+  setFullness,
   feedPet,
   type PetState,
 } from '../pet/pet-state';
@@ -60,5 +61,42 @@ suite('Pet State', () => {
     const nextState = feedPet(state, 2_000);
 
     assert.strictEqual(nextState.updatedAt, 2_000);
+  });
+
+  test('포만감을 지정한 값으로 변경한다', () => {
+    const state = createState({ fullness: 5 });
+
+    const nextState = setFullness(state, 7, 2_000);
+
+    assert.strictEqual(nextState.fullness, 7);
+    assert.strictEqual(nextState.updatedAt, 2_000);
+  });
+
+  test('포만감 경계값을 허용한다', () => {
+    const state = createState();
+
+    assert.strictEqual(setFullness(state, 0, 2_000).fullness, 0);
+    assert.strictEqual(setFullness(state, MAX_FULLNESS, 2_000).fullness, MAX_FULLNESS);
+  });
+
+  test('유효하지 않은 포만감을 거부한다', () => {
+    const state = createState();
+
+    for (const fullness of [-1, MAX_FULLNESS + 1, 1.5, Number.NaN, Number.POSITIVE_INFINITY]) {
+      assert.throws(
+        () => setFullness(state, fullness, 2_000),
+        /포만감 값 .*은 0부터 10까지의 정수여야 합니다/,
+      );
+    }
+  });
+
+  test('포만감을 설정할 때 기존 상태를 변경하지 않는다', () => {
+    const state = createState({ fullness: 5 });
+    const originalState = { ...state };
+
+    const nextState = setFullness(state, 7, 2_000);
+
+    assert.deepStrictEqual(state, originalState);
+    assert.notStrictEqual(nextState, state);
   });
 });
