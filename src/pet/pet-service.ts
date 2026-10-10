@@ -1,4 +1,4 @@
-import { createInitialPetState, feedPet, PetState } from './pet-state';
+import { createInitialPetState, setFullness, feedPet, type PetState } from './pet-state';
 import { PetStateStore } from './pet-state-store';
 
 export class PetService {
@@ -22,6 +22,15 @@ export class PetService {
     await this.store.save(nextState);
 
     // return next state
+    return nextState;
+  }
+
+  async setFullness(fullness: number): Promise<PetState> {
+    const currentState = await this.store.load();
+    const nextState = setFullness(currentState, fullness);
+
+    await this.store.save(nextState);
+
     return nextState;
   }
 

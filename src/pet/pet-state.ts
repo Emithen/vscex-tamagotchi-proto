@@ -42,7 +42,7 @@ export function setFullness(state: PetState, fullness: number, now = Date.now())
 
   return {
     ...state,
-    fullness: fullness,
+    fullness,
     updatedAt: now,
   };
 }
