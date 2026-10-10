@@ -12,7 +12,13 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [],
+    "commands": [
+      {
+        "command": "tamagotchi.setFullness",
+        "title": "포만감 설정",
+        "category": "Tamagotchi (개발)"
+      }
+    ],
     "viewsContainers": {
       "activitybar": [
         {

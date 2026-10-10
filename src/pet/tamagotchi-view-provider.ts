@@ -6,6 +6,8 @@ import { randomBytes } from 'node:crypto';
 export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'tamagotchi.petView';
 
+  private webviewView?: vscode.WebviewView;
+
   // Webview View 에게 Extension URI 를 전달
   constructor(
     private readonly extensionUri: vscode.Uri,
@@ -13,24 +15,48 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   ) {}
 
   async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
+    this.webviewView = webviewView;
+
     webviewView.webview.options = {
       enableScripts: true,
       localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'media')],
     };
 
-    const petState = await this.petService.getState();
-
-    webviewView.webview.html = await this.getHtml(webviewView.webview, petState);
-
-    webviewView.webview.onDidReceiveMessage(async (message) => {
+    const messageSubscription = webviewView.webview.onDidReceiveMessage(async (message) => {
       if (message.type !== 'feed') {
         return;
       }
 
-      const nextState = await this.petService.feed();
-
-      webviewView.webview.html = await this.getHtml(webviewView.webview, nextState);
+      await this.petService.feed();
+      await this.refresh();
     });
+
+    webviewView.onDidDispose(() => {
+      messageSubscription.dispose();
+
+      if (this.webviewView === webviewView) {
+        this.webviewView = undefined;
+      }
+    });
+
+    await this.refresh();
+  }
+
+  public async refresh(): Promise<void> {
+    const webviewView = this.webviewView;
+
+    if (!webviewView) {
+      return;
+    }
+
+    const petState = await this.petService.getState();
+    const html = await this.getHtml(webviewView.webview, petState);
+
+    if (this.webviewView !== webviewView) {
+      return;
+    }
+
+    webviewView.webview.html = html;
   }
 
   private async getHtml(webview: vscode.Webview, petState: PetState): Promise<string> {
