@@ -41,7 +41,9 @@
     "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\"",
     "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "validate": "pnpm run format && pnpm run compile && pnpm run lint",
+    "verify": "pnpm run format:check && pnpm run test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
