@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { PetState, clampFullness } from './pet-state';
+import { MIN_FULLNESS, PetState, clampFullness, getFullnessDecayDelay } from './pet-state';
 import { PetService } from './pet-service';
 import { randomBytes } from 'node:crypto';
 
@@ -7,6 +7,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'tamagotchi.petView';
 
   private webviewView?: vscode.WebviewView;
+  private refreshTimer?: ReturnType<typeof setTimeout>;
 
   // Webview View 에게 Extension URI 를 전달
   constructor(
@@ -15,6 +16,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   ) {}
 
   async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
+    this.clearRefreshTimer();
     this.webviewView = webviewView;
 
     webviewView.webview.options = {
@@ -31,10 +33,25 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       await this.refresh();
     });
 
+    const visibilitySubscription = webviewView.onDidChangeVisibility(async () => {
+      if (this.webviewView !== webviewView) {
+        return;
+      }
+
+      if (!webviewView.visible) {
+        this.clearRefreshTimer();
+        return;
+      }
+
+      await this.refresh();
+    });
+
     webviewView.onDidDispose(() => {
       messageSubscription.dispose();
+      visibilitySubscription.dispose();
 
       if (this.webviewView === webviewView) {
+        this.clearRefreshTimer();
         this.webviewView = undefined;
       }
     });
@@ -45,7 +62,9 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public async refresh(): Promise<void> {
     const webviewView = this.webviewView;
 
-    if (!webviewView) {
+    this.clearRefreshTimer();
+
+    if (!webviewView || !webviewView.visible) {
       return;
     }
 
@@ -57,6 +76,41 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     }
 
     webviewView.webview.html = html;
+    this.scheduleRefresh(webviewView, petState);
+  }
+
+  private scheduleRefresh(webviewView: vscode.WebviewView, petState: PetState): void {
+    if (
+      this.webviewView !== webviewView ||
+      !webviewView.visible ||
+      petState.fullness <= MIN_FULLNESS
+    ) {
+      return;
+    }
+
+    const delay = getFullnessDecayDelay(petState);
+
+    this.refreshTimer = setTimeout(() => {
+      this.refreshTimer = undefined;
+
+      void this.refresh().catch((cause: unknown) => {
+        console.error(
+          new Error(
+            `Tamagotchi Webview 자동 갱신 실패: View "${TamagotchiViewProvider.viewType}"의 포만감 표시를 갱신하지 못했습니다. Extension Host 로그와 PetService 상태 조회를 확인하세요.`,
+            { cause },
+          ),
+        );
+      });
+    }, delay);
+  }
+
+  private clearRefreshTimer(): void {
+    if (this.refreshTimer === undefined) {
+      return;
+    }
+
+    clearTimeout(this.refreshTimer);
+    this.refreshTimer = undefined;
   }
 
   private async getHtml(webview: vscode.Webview, petState: PetState): Promise<string> {

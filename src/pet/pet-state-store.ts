@@ -3,7 +3,7 @@
  */
 
 import * as vscode from 'vscode';
-import { PetState, createInitialPetState } from './pet-state';
+import { MAX_FULLNESS, MIN_FULLNESS, PetState, createInitialPetState } from './pet-state';
 
 const PET_STATE_KEY = 'tamagotchi.petState';
 
@@ -12,9 +12,9 @@ export class PetStateStore {
 
   // 있으면 불러오고 없으면 초기화
   async load(): Promise<PetState> {
-    const savedState = this.globalState.get<PetState>(PET_STATE_KEY);
+    const savedState = this.globalState.get<unknown>(PET_STATE_KEY);
 
-    if (savedState) {
+    if (isPetState(savedState)) {
       return savedState;
     }
 
@@ -27,4 +27,22 @@ export class PetStateStore {
   async save(petState: PetState): Promise<void> {
     await this.globalState.update(PET_STATE_KEY, petState);
   }
+}
+
+function isPetState(value: unknown): value is PetState {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const state = value as Partial<PetState>;
+
+  return (
+    typeof state.name === 'string' &&
+    Number.isInteger(state.fullness) &&
+    state.fullness !== undefined &&
+    state.fullness >= MIN_FULLNESS &&
+    state.fullness <= MAX_FULLNESS &&
+    typeof state.nextFullnessDecayAt === 'number' &&
+    Number.isFinite(state.nextFullnessDecayAt)
+  );
 }

@@ -1,11 +1,29 @@
-import { createInitialPetState, setFullness, feedPet, type PetState } from './pet-state';
+import {
+  applyFullnessDecay,
+  createInitialPetState,
+  setFullness,
+  feedPet,
+  type PetState,
+} from './pet-state';
 import { PetStateStore } from './pet-state-store';
 
+type PetStateStorage = Pick<PetStateStore, 'load' | 'save'>;
+
 export class PetService {
-  constructor(private readonly store: PetStateStore) {}
+  constructor(
+    private readonly store: PetStateStorage,
+    private readonly now: () => number = Date.now,
+  ) {}
 
   async getState(): Promise<PetState> {
-    return this.store.load();
+    const storedState = await this.store.load();
+    const currentState = applyFullnessDecay(storedState, this.now());
+
+    if (currentState !== storedState) {
+      await this.store.save(currentState);
+    }
+
+    return currentState;
   }
 
   /**
@@ -14,20 +32,21 @@ export class PetService {
    * @returns 호출자에게 next state 를 반환
    */
   async feed(): Promise<PetState> {
-    // current -> next state
-    const currentState = await this.store.load();
-    const nextState = feedPet(currentState);
+    const now = this.now();
+    const storedState = await this.store.load();
+    const currentState = applyFullnessDecay(storedState, now);
+    const nextState = feedPet(currentState, now);
 
-    // update global store
-    await this.store.save(nextState);
+    if (nextState !== storedState) {
+      await this.store.save(nextState);
+    }
 
-    // return next state
     return nextState;
   }
 
   async setFullness(fullness: number): Promise<PetState> {
     const currentState = await this.store.load();
-    const nextState = setFullness(currentState, fullness);
+    const nextState = setFullness(currentState, fullness, this.now());
 
     await this.store.save(nextState);
 
@@ -35,7 +54,7 @@ export class PetService {
   }
 
   async reset(): Promise<PetState> {
-    const initialState = createInitialPetState();
+    const initialState = createInitialPetState(this.now());
 
     await this.store.save(initialState);
 
