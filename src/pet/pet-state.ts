@@ -6,6 +6,8 @@ export const FULLNESS_DECAY_INTERVAL_MS = 60 * 60 * 1_000;
 export type PetState = {
   name: string;
   fullness: number;
+  experience: number;
+  lastRewardedBattleId?: string;
   /** 다음 포만감 감소가 발생할 시각이다. */
   nextFullnessDecayAt: number;
 };
@@ -14,6 +16,7 @@ export function createInitialPetState(now = Date.now()): PetState {
   return {
     name: '물짱이',
     fullness: DEFAULT_FULLNESS,
+    experience: 0,
     nextFullnessDecayAt: now + FULLNESS_DECAY_INTERVAL_MS,
   };
 }

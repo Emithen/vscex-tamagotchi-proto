@@ -21,6 +21,7 @@ function createState(overrides: Partial<PetState> = {}): PetState {
   return {
     name: '물짱이',
     fullness: 5,
+    experience: 0,
     nextFullnessDecayAt: FULLNESS_DECAY_INTERVAL_MS,
     ...overrides,
   };
@@ -74,5 +75,18 @@ suite('Pet Service', () => {
 
     assert.strictEqual(state, storedState);
     assert.strictEqual(store.saveCount, 0);
+  });
+
+  test('전투 경험치를 같은 전투에서 한 번만 지급한다', async () => {
+    const store = new TestPetStateStore(createState());
+    const service = new PetService(store, () => 0);
+
+    const rewardedState = await service.addBattleExperience('battle-1', 10);
+    const retriedState = await service.addBattleExperience('battle-1', 10);
+
+    assert.strictEqual(rewardedState.experience, 10);
+    assert.strictEqual(retriedState.experience, 10);
+    assert.strictEqual(retriedState.lastRewardedBattleId, 'battle-1');
+    assert.strictEqual(store.saveCount, 1);
   });
 });

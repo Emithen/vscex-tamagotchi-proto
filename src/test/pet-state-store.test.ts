@@ -52,6 +52,7 @@ suite('Pet State Store', () => {
 
     assert.strictEqual(state.name, '물짱이');
     assert.strictEqual(state.fullness, DEFAULT_FULLNESS);
+    assert.strictEqual(state.experience, 0);
     assert.ok(state.nextFullnessDecayAt >= before + FULLNESS_DECAY_INTERVAL_MS);
     assert.ok(state.nextFullnessDecayAt <= after + FULLNESS_DECAY_INTERVAL_MS);
     assert.deepStrictEqual(memento.get(PET_STATE_KEY), state);

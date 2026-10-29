@@ -3,13 +3,17 @@ import { PetStateStore } from './pet/pet-state-store';
 import { TamagotchiViewProvider } from './pet/tamagotchi-view-provider';
 import { PetService } from './pet/pet-service';
 import { MAX_FULLNESS, MIN_FULLNESS } from './pet/pet-state';
+import { BattleStateStore } from './battle/battle-state-store';
+import { BattleService } from './battle/battle-service';
 
 const SET_FULLNESS_COMMAND = 'tamagotchi.setFullness';
 
 export async function activate(context: vscode.ExtensionContext) {
   const store = new PetStateStore(context.globalState);
   const service = new PetService(store);
-  const provider = new TamagotchiViewProvider(context.extensionUri, service);
+  const battleStore = new BattleStateStore(context.globalState);
+  const battleService = new BattleService(battleStore, service);
+  const provider = new TamagotchiViewProvider(context.extensionUri, service, battleService);
 
   const setFullnessCommand = vscode.commands.registerCommand(SET_FULLNESS_COMMAND, async () => {
     const currentState = await service.getState();

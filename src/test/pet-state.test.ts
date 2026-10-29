@@ -15,6 +15,7 @@ function createState(overrides: Partial<PetState> = {}): PetState {
   return {
     name: '물짱이',
     fullness: DEFAULT_FULLNESS,
+    experience: 0,
     nextFullnessDecayAt: FULLNESS_DECAY_INTERVAL_MS,
     ...overrides,
   };
@@ -26,6 +27,7 @@ suite('Pet State', () => {
 
     assert.strictEqual(state.name, '물짱이');
     assert.strictEqual(state.fullness, DEFAULT_FULLNESS);
+    assert.strictEqual(state.experience, 0);
     assert.strictEqual(state.nextFullnessDecayAt, 1_000 + FULLNESS_DECAY_INTERVAL_MS);
   });
 

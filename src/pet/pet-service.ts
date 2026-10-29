@@ -53,6 +53,29 @@ export class PetService {
     return nextState;
   }
 
+  async addBattleExperience(battleId: string, amount: number): Promise<PetState> {
+    const currentState = await this.getState();
+
+    if (currentState.lastRewardedBattleId === battleId) {
+      return currentState;
+    }
+
+    if (!Number.isInteger(amount) || amount < 0) {
+      throw new Error(
+        `Tamagotchi 전투 보상 적용 실패: 경험치 "${amount}"이 0 이상의 정수가 아닙니다. 전투 "${battleId}"의 보상 설정을 확인하세요.`,
+      );
+    }
+
+    const nextState = {
+      ...currentState,
+      experience: currentState.experience + amount,
+      lastRewardedBattleId: battleId,
+    };
+
+    await this.store.save(nextState);
+    return nextState;
+  }
+
   async reset(): Promise<PetState> {
     const initialState = createInitialPetState(this.now());
 

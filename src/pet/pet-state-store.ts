@@ -42,6 +42,10 @@ function isPetState(value: unknown): value is PetState {
     state.fullness !== undefined &&
     state.fullness >= MIN_FULLNESS &&
     state.fullness <= MAX_FULLNESS &&
+    Number.isInteger(state.experience) &&
+    state.experience !== undefined &&
+    state.experience >= 0 &&
+    (state.lastRewardedBattleId === undefined || typeof state.lastRewardedBattleId === 'string') &&
     typeof state.nextFullnessDecayAt === 'number' &&
     Number.isFinite(state.nextFullnessDecayAt)
   );
