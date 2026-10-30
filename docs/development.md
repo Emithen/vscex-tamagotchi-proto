@@ -35,7 +35,7 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 
 ## 테스트 구성
 
-현재 테스트는 `src/test/pet-state.test.ts`에 있으며 다음 상태 규칙을 검사합니다.
+테스트는 `src/test/`에 있으며 다음 상태와 전투 규칙을 검사합니다.
 
 - 초기 상태 생성
 - 시간 경과에 따른 포만감 감소와 다음 감소 시각 계산
@@ -47,6 +47,10 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - 유효하지 않은 포만감 거부
 - 현재 스키마와 맞지 않는 저장 상태 초기화
 - 상태 조회와 먹이 주기 전 경과 시간 반영
+- 스테이지 조회와 유효하지 않은 스테이지 거부
+- 데미지, 공격 주기, 승패, 행동 수 상한 계산
+- 전투 생성, 종료 전 보상 거부, 보상 중복 방지
+- 전투 상태 저장, 삭제, 스키마 검증
 
 상태 규칙을 변경할 때는 해당 테스트를 먼저 갱신하고 `pnpm run verify`로 전체 검증합니다.
 
@@ -57,6 +61,9 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - `src/pet/pet-service.ts`: 상태 처리 흐름
 - `src/pet/pet-state-store.ts`: 영구 저장
 - `src/pet/tamagotchi-view-provider.ts`: Webview 연결과 렌더링
+- `src/battle/battle.ts`: 스테이지 설정과 전투 계산
+- `src/battle/battle-service.ts`: 전투 시작과 보상 처리
+- `src/battle/battle-state-store.ts`: 전투 상태 영구 저장
 - `media/pet-view/`: HTML, CSS, 브라우저 측 JavaScript
 - `src/test/`: 테스트
 

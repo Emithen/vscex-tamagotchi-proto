@@ -11,6 +11,9 @@ VS Code 사이드바에서 돌보는 작은 다마고치 확장 프로그램 프
 - 포만감을 0부터 10 사이로 제한
 - VS Code `globalState`에 펫 상태 저장
 - 개발 명령으로 포만감 직접 설정
+- `초원 1` 스테이지에서 물짱이끼리 자동전투
+- 전투 진행과 HP를 실시간으로 재생하고 승리 경험치 지급
+- 전투 상태 저장과 보상 중복 수령 방지
 
 기본 펫의 이름은 `물짱이`이고 초기 포만감은 5입니다.
 
@@ -28,6 +31,7 @@ VS Code에서 이 저장소를 연 뒤 `F5`를 누르면 Extension Development H
 먼저 [로드맵](docs/roadmap.md)에서 현재 진행 상황과 다음 작업을 확인하세요. 전체 문서 구성은 [문서 안내](docs/README.md)에 정리되어 있습니다.
 
 - [아키텍처](docs/architecture.md)
+- [전투 밸런싱](docs/balance.md)
 - [개발 가이드](docs/development.md)
 
 ## 상태

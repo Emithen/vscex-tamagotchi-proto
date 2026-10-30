@@ -33,7 +33,7 @@ export type BattleSimulation = {
 
 export type BattleRecord = BattleSimulation & {
   id: string;
-  stageId: typeof GRASSLAND_STAGE_ID;
+  stageId: BattleStageId;
   startedAt: number;
   pet: Combatant;
   enemy: Combatant;
@@ -45,12 +45,44 @@ export const MUDKIP_COMBATANT: Combatant = {
   id: 'mudkip',
   name: '물짱이',
   stats: {
-    maxHp: 120,
-    attack: 18,
-    defense: 12,
+    maxHp: 20,
+    attack: 10,
+    defense: 5,
     speed: 100,
   },
 };
+
+export type BattleStageId = typeof GRASSLAND_STAGE_ID;
+
+export type BattleStage = {
+  id: BattleStageId;
+  name: string;
+  enemy: Combatant;
+  victoryExperience: number;
+};
+
+export const GRASSLAND_STAGE: BattleStage = {
+  id: GRASSLAND_STAGE_ID,
+  name: '초원 1',
+  enemy: MUDKIP_COMBATANT,
+  victoryExperience: BATTLE_VICTORY_EXPERIENCE,
+};
+
+const BATTLE_STAGES: ReadonlyMap<string, BattleStage> = new Map([
+  [GRASSLAND_STAGE.id, GRASSLAND_STAGE],
+]);
+
+export function getBattleStage(stageId: string): BattleStage {
+  const stage = BATTLE_STAGES.get(stageId);
+
+  if (!stage) {
+    throw new Error(
+      `전투 스테이지 조회 실패: 스테이지 "${stageId}"을 찾지 못했습니다. "src/battle/battle.ts"의 "BATTLE_STAGES" 설정을 확인하세요.`,
+    );
+  }
+
+  return stage;
+}
 
 export function calculateDamage(attacker: CombatStats, defender: CombatStats): number {
   return Math.max(1, Math.floor((attacker.attack * 100) / (100 + defender.defense)));

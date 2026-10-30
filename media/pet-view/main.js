@@ -9,8 +9,14 @@ document.querySelector('[data-action="openStage"]')?.addEventListener('click', (
 document.querySelector('[data-action="openHome"]')?.addEventListener('click', () => {
   showScreen('home');
 });
-document.querySelector('[data-action="startBattle"]')?.addEventListener('click', () => {
-  vscode.postMessage({ type: 'startBattle' });
+document.querySelector('[data-action="startBattle"]')?.addEventListener('click', (event) => {
+  const button = event.currentTarget;
+  if (!(button instanceof HTMLElement) || !button.dataset.stageId) {
+    throw new Error(
+      'Tamagotchi Webview 전투 시작 실패: 버튼에서 "data-stage-id"를 찾지 못했습니다. "tamagotchi-view-provider.ts"의 스테이지 버튼 렌더링을 확인하세요.',
+    );
+  }
+  vscode.postMessage({ type: 'startBattle', stageId: button.dataset.stageId });
 });
 document.querySelector('[data-action="claimBattleReward"]')?.addEventListener('click', () => {
   vscode.postMessage({ type: 'claimBattleReward' });

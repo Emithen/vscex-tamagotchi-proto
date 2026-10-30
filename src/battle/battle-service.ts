@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
 import { PetService } from '../pet/pet-service';
 import {
-  BATTLE_VICTORY_EXPERIENCE,
   GRASSLAND_STAGE_ID,
   MUDKIP_COMBATANT,
+  getBattleStage,
   simulateBattle,
   type BattleRecord,
 } from './battle';
@@ -24,22 +24,23 @@ export class BattleService {
     return battle?.rewardClaimed ? undefined : battle;
   }
 
-  async startBattle(): Promise<BattleRecord> {
+  async startBattle(stageId: string = GRASSLAND_STAGE_ID): Promise<BattleRecord> {
     const currentBattle = this.getBattle();
 
     if (currentBattle) {
       return currentBattle;
     }
 
-    const simulation = simulateBattle(MUDKIP_COMBATANT, MUDKIP_COMBATANT);
+    const stage = getBattleStage(stageId);
+    const simulation = simulateBattle(MUDKIP_COMBATANT, stage.enemy);
     const battle: BattleRecord = {
       ...simulation,
       id: this.createId(),
-      stageId: GRASSLAND_STAGE_ID,
+      stageId: stage.id,
       startedAt: this.now(),
       pet: MUDKIP_COMBATANT,
-      enemy: MUDKIP_COMBATANT,
-      experienceReward: simulation.result === 'victory' ? BATTLE_VICTORY_EXPERIENCE : 0,
+      enemy: stage.enemy,
+      experienceReward: simulation.result === 'victory' ? stage.victoryExperience : 0,
       rewardClaimed: false,
     };
 

@@ -1,6 +1,11 @@
 import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
-import { type BattleRecord } from '../battle/battle';
+import {
+  GRASSLAND_STAGE,
+  getBattleStage,
+  type BattleRecord,
+  type BattleStage,
+} from '../battle/battle';
 import { BattleService } from '../battle/battle-service';
 import { MIN_FULLNESS, type PetState, clampFullness, getFullnessDecayDelay } from './pet-state';
 import { PetService } from './pet-service';
@@ -84,7 +89,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     if (messageType === 'feed') {
       await this.petService.feed();
     } else if (messageType === 'startBattle') {
-      await this.battleService.startBattle();
+      await this.battleService.startBattle(getMessageStageId(message));
     } else if (messageType === 'claimBattleReward') {
       await this.battleService.claimReward();
     } else if (messageType !== 'battleFinished') {
@@ -183,14 +188,15 @@ function renderMainContent(
   petImageUri: string,
 ): string {
   if (!battle) {
-    return renderHome(petState, petImageUri);
+    return renderHome(petState, GRASSLAND_STAGE, petImageUri);
   }
+  const stage = getBattleStage(battle.stageId);
   return Date.now() >= battle.startedAt + battle.durationMs
-    ? renderBattleResult(battle, petImageUri)
-    : renderBattle(battle, petImageUri);
+    ? renderBattleResult(battle, stage, petImageUri)
+    : renderBattle(battle, stage, petImageUri);
 }
 
-function renderHome(petState: PetState, petImageUri: string): string {
+function renderHome(petState: PetState, stage: BattleStage, petImageUri: string): string {
   const fullness = clampFullness(petState.fullness);
   return `
     <main class="screen home-screen" data-screen="home">
@@ -205,20 +211,20 @@ function renderHome(petState: PetState, petImageUri: string): string {
       </div>
     </main>
     <main class="screen stage-screen" data-screen="stage" hidden>
-      <p class="eyebrow">스테이지 선택</p><h2>초원 1</h2>
+      <p class="eyebrow">스테이지 선택</p><h2>${stage.name}</h2>
       <div class="stage-card">
-        <img class="stage-enemy-image" src="${petImageUri}" alt="적 물짱이" />
-        <p class="stage-enemy-name">적: 물짱이</p>
-        <p class="stage-reward">승리 보상: 경험치 +10</p>
+        <img class="stage-enemy-image" src="${petImageUri}" alt="적 ${stage.enemy.name}" />
+        <p class="stage-enemy-name">적: ${stage.enemy.name}</p>
+        <p class="stage-reward">승리 보상: 경험치 +${stage.victoryExperience}</p>
       </div>
       <div class="button-stack">
-        <button class="primary-button" type="button" data-action="startBattle">전투 시작</button>
+        <button class="primary-button" type="button" data-action="startBattle" data-stage-id="${stage.id}">전투 시작</button>
         <button class="secondary-button" type="button" data-action="openHome">돌아가기</button>
       </div>
     </main>`;
 }
 
-function renderBattle(battle: BattleRecord, petImageUri: string): string {
+function renderBattle(battle: BattleRecord, stage: BattleStage, petImageUri: string): string {
   const actions = battle.actions
     .map(
       (action) =>
@@ -227,7 +233,7 @@ function renderBattle(battle: BattleRecord, petImageUri: string): string {
     .join('');
   return `
     <main class="screen battle-screen" data-battle-started-at="${battle.startedAt}" data-battle-duration="${battle.durationMs}">
-      <p class="eyebrow">초원 1</p><h2>전투 진행 중</h2>
+      <p class="eyebrow">${stage.name}</p><h2>전투 진행 중</h2>
       <div class="combatants">
         ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, petImageUri)}
         <span class="versus">VS</span>
@@ -254,11 +260,11 @@ function renderCombatant(
   </section>`;
 }
 
-function renderBattleResult(battle: BattleRecord, petImageUri: string): string {
+function renderBattleResult(battle: BattleRecord, stage: BattleStage, petImageUri: string): string {
   const title =
     battle.result === 'victory' ? '승리!' : battle.result === 'defeat' ? '패배' : '무승부';
   return `<main class="screen result-screen">
-    <p class="eyebrow">초원 1 결과</p>
+    <p class="eyebrow">${stage.name} 결과</p>
     <img class="pet-image result-image" src="${petImageUri}" alt="${battle.pet.name}" />
     <h2>${title}</h2>
     <p class="result-reward">획득 경험치 <strong>+${battle.experienceReward}</strong></p>
@@ -271,4 +277,19 @@ function getMessageType(message: unknown): string {
     return 'unknown';
   }
   return typeof message.type === 'string' ? message.type : 'unknown';
+}
+
+function getMessageStageId(message: unknown): string {
+  if (
+    typeof message !== 'object' ||
+    message === null ||
+    !('stageId' in message) ||
+    typeof message.stageId !== 'string'
+  ) {
+    throw new Error(
+      'Tamagotchi Webview 전투 시작 실패: 요청에서 "stageId"를 찾지 못했습니다. "media/pet-view/main.js"의 전투 시작 메시지를 확인하세요.',
+    );
+  }
+
+  return message.stageId;
 }

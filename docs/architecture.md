@@ -6,17 +6,14 @@
 
 ```text
 Webview
-  │ feed 메시지
+  │ feed / startBattle / claimBattleReward 메시지
   ▼
 TamagotchiViewProvider
-  │
-  ▼
-PetService
-  ├── PetState 함수로 다음 상태 계산
-  └── PetStateStore로 상태 저장
-          │
-          ▼
-    VS Code globalState
+  ├── PetService → PetStateStore
+  └── BattleService → BattleStateStore
+                              │
+                              ▼
+                        VS Code globalState
 ```
 
 ## 구성 요소
@@ -69,3 +66,9 @@ type PetState = {
 Webview는 로컬 `media` 디렉터리만 리소스 루트로 허용하며, 스크립트 실행에는 매 렌더링 시 생성한 nonce와 Content Security Policy를 사용합니다.
 
 View가 보이는 동안에는 `nextFullnessDecayAt`에 맞춰 다음 화면 갱신을 한 번 예약합니다. View가 숨겨지거나 닫히면 타이머를 해제하고, 다시 보일 때 저장 상태와 경과 시간을 기준으로 즉시 갱신합니다. 포만감이 0이면 화면 변화가 없으므로 타이머를 예약하지 않습니다.
+
+### 전투
+
+`src/battle/battle.ts`는 전투원, 스탯, 스테이지 설정과 전투 시뮬레이션을 담습니다. 스테이지는 ID, 표시 이름, 적, 승리 경험치를 하나의 설정으로 관리합니다.
+
+`BattleService`는 스테이지 설정으로 행동 목록을 미리 계산하고 `BattleStateStore`에 저장합니다. Webview는 행동 시각에 맞춰 HP와 로그를 재생하며, 전투 종료 시각이 지난 후에만 보상을 수령할 수 있습니다. 펫 상태의 `lastRewardedBattleId`로 같은 전투의 경험치가 두 번 적용되는 것을 방지합니다.

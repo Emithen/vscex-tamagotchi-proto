@@ -34,6 +34,20 @@ class TestPetStore {
 }
 
 suite('Battle Service', () => {
+  test('등록되지 않은 스테이지로 전투를 시작하지 않는다', async () => {
+    const battleStore = new TestBattleStore();
+    const petService = new PetService(new TestPetStore(), () => 1_000);
+    const service = new BattleService(
+      battleStore,
+      petService,
+      () => 1_000,
+      () => 'battle-1',
+    );
+
+    await assert.rejects(() => service.startBattle('unknown-stage'), /unknown-stage/);
+    assert.strictEqual(battleStore.battle, undefined);
+  });
+
   test('초원 1 전투를 생성하고 완료 전에는 보상을 거부한다', async () => {
     const battleStore = new TestBattleStore();
     const petStore = new TestPetStore();
