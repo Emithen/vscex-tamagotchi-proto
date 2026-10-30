@@ -52,9 +52,11 @@ export default [
       globals: {
         acquireVsCodeApi: 'readonly',
         document: 'readonly',
+        HTMLCanvasElement: 'readonly',
         HTMLElement: 'readonly',
         HTMLProgressElement: 'readonly',
         setTimeout: 'readonly',
+        window: 'readonly',
       },
     },
 

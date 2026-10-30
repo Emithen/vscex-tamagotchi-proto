@@ -45,20 +45,23 @@
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\"",
-    "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"*.{json,mjs}\"",
+    "validate:pixel-assets": "node scripts/validate-pixel-assets.mjs",
+    "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
     "test": "vscode-test",
     "validate": "pnpm run format && pnpm run compile && pnpm run lint",
-    "verify": "pnpm run format:check && pnpm run test"
+    "verify": "pnpm run format:check && pnpm run validate:pixel-assets && pnpm run test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
+    "@types/pngjs": "^6.0.5",
     "@types/vscode": "^1.140.0",
     "@types/vscode-webview": "^1.57.5",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.0.0",
     "eslint": "^10.5.0",
+    "pngjs": "^7.0.0",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1"

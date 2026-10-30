@@ -35,6 +35,7 @@ Tamagotchi View의 너비와 높이를 바꾸며 다음 배율 전환을 확인�
 pnpm run compile       # TypeScript 컴파일
 pnpm run watch         # TypeScript 변경 감시
 pnpm run lint          # TypeScript와 Webview JavaScript 린트
+pnpm run validate:pixel-assets # 스프라이트 크기·팔레트·투명도 검사
 pnpm run format:check  # 포맷 변경 없이 검사
 pnpm run format        # Prettier로 파일 수정
 pnpm run test          # VS Code 테스트 실행
@@ -75,6 +76,8 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - `src/battle/battle-service.ts`: 전투 시작과 보상 처리
 - `src/battle/battle-state-store.ts`: 전투 상태 영구 저장
 - `media/pet-view/`: HTML, CSS, 브라우저 측 JavaScript
+- `media/pixel/`: 픽셀 원본, 스프라이트, manifest, 팔레트
+- `scripts/validate-pixel-assets.mjs`: 픽셀 에셋 규격 검사
 - `docs/pixel-perfect.md`: 픽셀 렌더링과 에셋 규격, 단계별 구축 상태
 - `src/test/`: 테스트
 

@@ -156,7 +156,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       vscode.Uri.joinPath(viewRootUri, 'index.html'),
     );
     const petImageUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'media', 'pet-sprite.png'),
+      vscode.Uri.joinPath(this.extensionUri, 'media', 'pixel', 'sprites', 'coralfin-idle.png'),
     );
     const nonce = randomBytes(16).toString('hex');
     const contentSecurityPolicy = [
@@ -200,7 +200,7 @@ function renderHome(petState: PetState, stage: BattleStage, petImageUri: string)
   const fullness = clampFullness(petState.fullness);
   return `
     <main class="screen home-screen" data-screen="home">
-      <img class="pet-image" src="${petImageUri}" alt="${petState.name}" />
+      ${renderPixelSprite('pet-image', petImageUri, petState.name)}
       <h2>${petState.name}</h2>
       <p class="experience">경험치 ${petState.experience}</p>
       <p class="fullness">포만감: ${fullness} / 10</p>
@@ -213,7 +213,7 @@ function renderHome(petState: PetState, stage: BattleStage, petImageUri: string)
     <main class="screen stage-screen" data-screen="stage" hidden>
       <p class="eyebrow">스테이지 선택</p><h2>${stage.name}</h2>
       <div class="stage-card">
-        <img class="stage-enemy-image" src="${petImageUri}" alt="적 ${stage.enemy.name}" />
+        ${renderPixelSprite('stage-enemy-image', petImageUri, `적 ${stage.enemy.name}`)}
         <p class="stage-enemy-name">적: ${stage.enemy.name}</p>
         <p class="stage-reward">승리 보상: 경험치 +${stage.victoryExperience}</p>
       </div>
@@ -253,7 +253,7 @@ function renderCombatant(
 ): string {
   return `<section class="combatant combatant--${side}">
     <span class="combatant-label">${label}</span>
-    <img class="combatant-image" src="${petImageUri}" alt="${label} ${name}" />
+    ${renderPixelSprite('combatant-image', petImageUri, `${label} ${name}`)}
     <strong>${name}</strong>
     <progress data-hp-bar="${side}" max="${maxHp}" value="${maxHp}"></progress>
     <span class="hp-text" data-hp-text="${side}">${maxHp} / ${maxHp}</span>
@@ -265,11 +265,27 @@ function renderBattleResult(battle: BattleRecord, stage: BattleStage, petImageUr
     battle.result === 'victory' ? '승리!' : battle.result === 'defeat' ? '패배' : '무승부';
   return `<main class="screen result-screen">
     <p class="eyebrow">${stage.name} 결과</p>
-    <img class="pet-image result-image" src="${petImageUri}" alt="${battle.pet.name}" />
+    ${renderPixelSprite('pet-image result-image', petImageUri, battle.pet.name)}
     <h2>${title}</h2>
     <p class="result-reward">획득 경험치 <strong>+${battle.experienceReward}</strong></p>
     <button class="primary-button" type="button" data-action="claimBattleReward">보상 받기</button>
   </main>`;
+}
+
+function renderPixelSprite(className: string, spriteUri: string, label: string): string {
+  return `<canvas
+    class="pixel-sprite ${className}"
+    width="32"
+    height="32"
+    data-pixel-sprite
+    data-sprite-src="${spriteUri}"
+    data-frame-width="32"
+    data-frame-height="32"
+    data-frame-count="4"
+    data-fps="4"
+    role="img"
+    aria-label="${label}"
+  ></canvas>`;
 }
 
 function getMessageType(message: unknown): string {

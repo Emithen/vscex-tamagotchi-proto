@@ -15,3 +15,5 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - 스테이지 ID, 적, 보상 설정 분리
 - 물짱이 기준 스탯과 전투 템포 조정
 - Pixel Perfect 144×216 논리 화면과 1×·2×·3× 정수 배율 렌더링 기반
+- 32×32 오리지널 펫 idle 스프라이트와 Canvas 재생
+- 픽셀 에셋 manifest와 크기·팔레트·투명도 자동 검사

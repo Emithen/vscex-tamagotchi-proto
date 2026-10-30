@@ -96,6 +96,11 @@ button {
   image-rendering: crisp-edges;
 }
 
+.pixel-sprite {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
 .pet-image {
   width: 96px;
   height: 96px;
@@ -236,8 +241,8 @@ progress {
 }
 
 .combatant-image {
-  width: 48px;
-  height: 48px;
+  width: 32px;
+  height: 32px;
 }
 
 .combatant--enemy .combatant-image {
