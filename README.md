@@ -32,6 +32,7 @@ VS Code에서 이 저장소를 연 뒤 `F5`를 누르면 Extension Development H
 
 - [아키텍처](docs/architecture.md)
 - [전투 밸런싱](docs/balance.md)
+- [Pixel Perfect 시스템](docs/pixel-perfect.md)
 - [개발 가이드](docs/development.md)
 
 ## 상태

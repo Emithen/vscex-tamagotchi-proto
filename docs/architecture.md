@@ -65,6 +65,8 @@ type PetState = {
 
 Webview는 로컬 `media` 디렉터리만 리소스 루트로 허용하며, 스크립트 실행에는 매 렌더링 시 생성한 nonce와 Content Security Policy를 사용합니다.
 
+Webview 콘텐츠는 144×216 논리 화면인 `.pixel-canvas`에 렌더링됩니다. `.pixel-viewport`는 가용 너비와 높이에 따라 1×, 2×, 3× 정수 배율만 사용하고 분수 배율로 인한 픽셀 경계 흐림을 방지합니다. 세부 규격과 단계별 전환 계획은 `docs/pixel-perfect.md`에 기록합니다.
+
 View가 보이는 동안에는 `nextFullnessDecayAt`에 맞춰 다음 화면 갱신을 한 번 예약합니다. View가 숨겨지거나 닫히면 타이머를 해제하고, 다시 보일 때 저장 상태와 경과 시간을 기준으로 즉시 갱신합니다. 포만감이 0이면 화면 변화가 없으므로 타이머를 예약하지 않습니다.
 
 ### 전투

@@ -19,6 +19,16 @@ VS Code에서 저장소를 열고 `F5`를 누릅니다. `Run Extension` 실행 �
 
 Command Palette에서 `Tamagotchi (개발): 포만감 설정`을 실행하면 포만감을 `0~10` 사이의 정수로 직접 바꿀 수 있습니다.
 
+### Pixel Perfect 수동 검수
+
+Tamagotchi View의 너비와 높이를 바꾸며 다음 배율 전환을 확인합니다.
+
+- 기본: 144×216 논리 화면의 1× 표시
+- 288×448 CSS px 이상: 2× 표시
+- 432×664 CSS px 이상: 3× 표시
+
+배율 전환 시 화면이 매끄럽게 늘어나지 않고 정수 단계로 바뀌는지, 홈·스테이지·전투·결과 화면의 컨텐츠가 잘리지 않는지, Tab으로 모든 버튼에 이동할 수 있는지를 함께 확인합니다. 상세 규격은 `docs/pixel-perfect.md`를 따릅니다.
+
 ## 주요 명령
 
 ```sh
@@ -65,6 +75,7 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - `src/battle/battle-service.ts`: 전투 시작과 보상 처리
 - `src/battle/battle-state-store.ts`: 전투 상태 영구 저장
 - `media/pet-view/`: HTML, CSS, 브라우저 측 JavaScript
+- `docs/pixel-perfect.md`: 픽셀 렌더링과 에셋 규격, 단계별 구축 상태
 - `src/test/`: 테스트
 
 프로젝트 소유 오류 메시지는 한국어로 작성하고 실패한 구성 요소, 구체적인 대상, 해결 방법을 포함합니다. 세부 작업 규칙은 루트의 `AGENTS.md`를 따릅니다.
