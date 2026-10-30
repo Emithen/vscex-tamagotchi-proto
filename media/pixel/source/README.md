@@ -2,6 +2,8 @@
 
 `coralfin-idle-concept.png`는 Codex의 내장 `image_gen` 도구로 생성한 오리지널 펫 스프라이트 컨셉 원본입니다. 생성물은 2172×724px 투명 PNG이며 런타임에서 직접 사용하지 않습니다.
 
+`coralfin-blink-concept.png`, `coralfin-eat-concept.png`, `coralfin-happy-concept.png`, `coralfin-hungry-concept.png`는 idle 원본을 캐릭터 anchor로 사용해 파생한 상태별 프로토타입입니다. 현재 시트는 생성 전략 재정비 전의 검증용 에셋으로, 체형과 외곽선의 수동 클린업이 더 필요합니다.
+
 제작 의도:
 
 - GBA 시대 핸드헬드 RPG 픽셀 아트
@@ -11,3 +13,5 @@
 - 기존 게임이나 애니메이션 캐릭터를 복제하지 않은 디자인
 
 정규화 결과는 `../sprites/coralfin-idle.png`에 있습니다. 각 프레임을 투명 경계로 잘라 30×30px 영역에 nearest-neighbor로 맞춘 뒤 1px 여백을 추가했습니다. 최종 시트는 128×32px, 4개의 32×32px 프레임, 16색 이하, 이진 알파를 사용합니다.
+
+파생 시트는 `scripts/normalize-pixel-sheet.mjs`로 정규화합니다. 이 도구는 투명 경계 자르기, 32×32px 기준점 배치, nearest-neighbor 축소, `coralfin.json` 고정 팔레트 매핑, 이진 알파 변환을 수행합니다.

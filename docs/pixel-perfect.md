@@ -87,6 +87,8 @@ Webview App
 
 - [x] `media/pixel/` 디렉터리와 manifest 스키마
 - [x] 32×32 오리지널 펫 idle 스프라이트
+- [x] blink, eat, happy, hungry 프로토타입 스프라이트
+- [x] 투명 경계·32×32 배치·고정 팔레트 매핑 정규화 도구
 - [x] 크기, 팔레트, 반투명 픽셀 자동 검사
 - [x] 에셋 문제를 한국어 오류로 보고
 - [ ] attack, hit, faint, victory 스프라이트 시트
@@ -95,7 +97,8 @@ Webview App
 ### 3. 홈과 돌봄
 
 - [x] idle 애니메이션
-- [ ] blink, eat, happy, hungry 애니메이션
+- [x] blink, eat, happy, hungry 프로토타입 시트와 manifest
+- [x] 포만감과 먹이 주기 이벤트에 blink, eat, happy, hungry 재생 연결
 - [ ] 픽셀 포만감 게이지와 버튼
 - [ ] 상태 변경 중에 Webview를 재로드하지 않는 메시지 흐름
 

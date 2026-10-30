@@ -10,6 +10,14 @@ import { BattleService } from '../battle/battle-service';
 import { MIN_FULLNESS, type PetState, clampFullness, getFullnessDecayDelay } from './pet-state';
 import { PetService } from './pet-service';
 
+type PetSpriteUris = {
+  idle: string;
+  blink: string;
+  eat: string;
+  happy: string;
+  hungry: string;
+};
+
 export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'tamagotchi.petView';
   private webviewView?: vscode.WebviewView;
@@ -155,9 +163,25 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     const templateBytes = await vscode.workspace.fs.readFile(
       vscode.Uri.joinPath(viewRootUri, 'index.html'),
     );
-    const petImageUri = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.extensionUri, 'media', 'pixel', 'sprites', 'coralfin-idle.png'),
-    );
+    const getSpriteUri = (animation: keyof PetSpriteUris): string =>
+      webview
+        .asWebviewUri(
+          vscode.Uri.joinPath(
+            this.extensionUri,
+            'media',
+            'pixel',
+            'sprites',
+            `coralfin-${animation}.png`,
+          ),
+        )
+        .toString();
+    const spriteUris: PetSpriteUris = {
+      idle: getSpriteUri('idle'),
+      blink: getSpriteUri('blink'),
+      eat: getSpriteUri('eat'),
+      happy: getSpriteUri('happy'),
+      hungry: getSpriteUri('hungry'),
+    };
     const nonce = randomBytes(16).toString('hex');
     const contentSecurityPolicy = [
       "default-src 'none'",
@@ -170,7 +194,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       .decode(templateBytes)
       .replace('{{contentSecurityPolicy}}', contentSecurityPolicy)
       .replace('{{nonce}}', nonce)
-      .replace('{{mainContent}}', renderMainContent(petState, battle, petImageUri.toString()))
+      .replace('{{mainContent}}', renderMainContent(petState, battle, spriteUris))
       .replace(
         '{{styleUri}}',
         webview.asWebviewUri(vscode.Uri.joinPath(viewRootUri, 'style.css')).toString(),
@@ -185,22 +209,32 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
 function renderMainContent(
   petState: PetState,
   battle: BattleRecord | undefined,
-  petImageUri: string,
+  spriteUris: PetSpriteUris,
 ): string {
   if (!battle) {
-    return renderHome(petState, GRASSLAND_STAGE, petImageUri);
+    return renderHome(petState, GRASSLAND_STAGE, spriteUris);
   }
   const stage = getBattleStage(battle.stageId);
   return Date.now() >= battle.startedAt + battle.durationMs
-    ? renderBattleResult(battle, stage, petImageUri)
-    : renderBattle(battle, stage, petImageUri);
+    ? renderBattleResult(battle, stage, spriteUris)
+    : renderBattle(battle, stage, spriteUris);
 }
 
-function renderHome(petState: PetState, stage: BattleStage, petImageUri: string): string {
+function renderHome(petState: PetState, stage: BattleStage, spriteUris: PetSpriteUris): string {
   const fullness = clampFullness(petState.fullness);
+  const homeSprite =
+    fullness <= 2
+      ? { uri: spriteUris.hungry, fps: 3, frames: [0, 1, 2, 3] }
+      : fullness >= 9
+        ? { uri: spriteUris.happy, fps: 4, frames: [0, 1, 2, 3] }
+        : { uri: spriteUris.blink, fps: 4, frames: [0, 0, 0, 0, 0, 0, 1, 2, 3] };
   return `
     <main class="screen home-screen" data-screen="home">
-      ${renderPixelSprite('pet-image', petImageUri, petState.name)}
+      ${renderPixelSprite('pet-image', homeSprite.uri, petState.name, {
+        fps: homeSprite.fps,
+        frames: homeSprite.frames,
+        extraAttributes: `data-home-pet-sprite data-eat-src="${spriteUris.eat}"`,
+      })}
       <h2>${petState.name}</h2>
       <p class="experience">경험치 ${petState.experience}</p>
       <p class="fullness">포만감: ${fullness} / 10</p>
@@ -213,7 +247,7 @@ function renderHome(petState: PetState, stage: BattleStage, petImageUri: string)
     <main class="screen stage-screen" data-screen="stage" hidden>
       <p class="eyebrow">스테이지 선택</p><h2>${stage.name}</h2>
       <div class="stage-card">
-        ${renderPixelSprite('stage-enemy-image', petImageUri, `적 ${stage.enemy.name}`)}
+        ${renderPixelSprite('stage-enemy-image', spriteUris.idle, `적 ${stage.enemy.name}`)}
         <p class="stage-enemy-name">적: ${stage.enemy.name}</p>
         <p class="stage-reward">승리 보상: 경험치 +${stage.victoryExperience}</p>
       </div>
@@ -224,7 +258,7 @@ function renderHome(petState: PetState, stage: BattleStage, petImageUri: string)
     </main>`;
 }
 
-function renderBattle(battle: BattleRecord, stage: BattleStage, petImageUri: string): string {
+function renderBattle(battle: BattleRecord, stage: BattleStage, spriteUris: PetSpriteUris): string {
   const actions = battle.actions
     .map(
       (action) =>
@@ -235,9 +269,9 @@ function renderBattle(battle: BattleRecord, stage: BattleStage, petImageUri: str
     <main class="screen battle-screen" data-battle-started-at="${battle.startedAt}" data-battle-duration="${battle.durationMs}">
       <p class="eyebrow">${stage.name}</p><h2>전투 진행 중</h2>
       <div class="combatants">
-        ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, petImageUri)}
+        ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, spriteUris.idle)}
         <span class="versus">VS</span>
-        ${renderCombatant('enemy', '적', battle.enemy.name, battle.enemy.stats.maxHp, petImageUri)}
+        ${renderCombatant('enemy', '적', battle.enemy.name, battle.enemy.stats.maxHp, spriteUris.idle)}
       </div>
       <p class="battle-log" data-battle-log>전투를 준비하고 있어요.</p>
       <ol hidden>${actions}</ol>
@@ -260,19 +294,41 @@ function renderCombatant(
   </section>`;
 }
 
-function renderBattleResult(battle: BattleRecord, stage: BattleStage, petImageUri: string): string {
+function renderBattleResult(
+  battle: BattleRecord,
+  stage: BattleStage,
+  spriteUris: PetSpriteUris,
+): string {
   const title =
     battle.result === 'victory' ? '승리!' : battle.result === 'defeat' ? '패배' : '무승부';
   return `<main class="screen result-screen">
     <p class="eyebrow">${stage.name} 결과</p>
-    ${renderPixelSprite('pet-image result-image', petImageUri, battle.pet.name)}
+    ${renderPixelSprite(
+      'pet-image result-image',
+      battle.result === 'victory' ? spriteUris.happy : spriteUris.hungry,
+      battle.pet.name,
+      { fps: battle.result === 'victory' ? 4 : 3 },
+    )}
     <h2>${title}</h2>
     <p class="result-reward">획득 경험치 <strong>+${battle.experienceReward}</strong></p>
     <button class="primary-button" type="button" data-action="claimBattleReward">보상 받기</button>
   </main>`;
 }
 
-function renderPixelSprite(className: string, spriteUri: string, label: string): string {
+function renderPixelSprite(
+  className: string,
+  spriteUri: string,
+  label: string,
+  options: {
+    fps?: number;
+    frames?: number[];
+    loop?: boolean;
+    extraAttributes?: string;
+  } = {},
+): string {
+  const fps = options.fps ?? 4;
+  const frames = options.frames ?? [0, 1, 2, 3];
+  const loop = options.loop ?? true;
   return `<canvas
     class="pixel-sprite ${className}"
     width="32"
@@ -282,7 +338,10 @@ function renderPixelSprite(className: string, spriteUri: string, label: string):
     data-frame-width="32"
     data-frame-height="32"
     data-frame-count="4"
-    data-fps="4"
+    data-frame-sequence="${frames.join(',')}"
+    data-fps="${fps}"
+    data-loop="${loop}"
+    ${options.extraAttributes ?? ''}
     role="img"
     aria-label="${label}"
   ></canvas>`;

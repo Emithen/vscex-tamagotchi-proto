@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "coralfin-blink",
+  "image": "../sprites/coralfin-blink.png",
+  "frame": {
+    "width": 32,
+    "height": 32,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "blink": {
+      "frames": [0, 0, 0, 0, 0, 0, 1, 2, 3],
+      "fps": 4,
+      "loop": true
+    }
+  }
+}

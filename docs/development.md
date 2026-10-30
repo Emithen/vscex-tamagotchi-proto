@@ -36,6 +36,7 @@ pnpm run compile       # TypeScript 컴파일
 pnpm run watch         # TypeScript 변경 감시
 pnpm run lint          # TypeScript와 Webview JavaScript 린트
 pnpm run validate:pixel-assets # 스프라이트 크기·팔레트·투명도 검사
+pnpm run normalize:pixel-sheet -- <input> <output> <palette> # 생성 시트 32×32px 정규화
 pnpm run format:check  # 포맷 변경 없이 검사
 pnpm run format        # Prettier로 파일 수정
 pnpm run test          # VS Code 테스트 실행

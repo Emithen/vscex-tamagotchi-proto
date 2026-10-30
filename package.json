@@ -45,6 +45,7 @@
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
     "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\"",
+    "normalize:pixel-sheet": "node scripts/normalize-pixel-sheet.mjs",
     "validate:pixel-assets": "node scripts/validate-pixel-assets.mjs",
     "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",

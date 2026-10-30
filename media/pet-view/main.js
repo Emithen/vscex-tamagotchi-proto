@@ -1,4 +1,5 @@
 const vscode = acquireVsCodeApi();
+const spriteAnimationTokens = new WeakMap();
 
 document.querySelectorAll('[data-pixel-sprite]').forEach((element) => {
   if (element instanceof HTMLCanvasElement) {
@@ -6,8 +7,27 @@ document.querySelectorAll('[data-pixel-sprite]').forEach((element) => {
   }
 });
 
-document.querySelector('[data-action="feed"]')?.addEventListener('click', () => {
-  vscode.postMessage({ type: 'feed' });
+document.querySelector('[data-action="feed"]')?.addEventListener('click', (event) => {
+  const button = event.currentTarget;
+  const petSprite = document.querySelector('[data-home-pet-sprite]');
+
+  if (!(button instanceof HTMLElement) || button.tagName !== 'BUTTON') {
+    throw new Error(
+      'Tamagotchi 먹이주기 애니메이션 실패: "data-action=feed" 대상이 버튼이 아닙니다. "tamagotchi-view-provider.ts"의 먹이주기 버튼을 확인하세요.',
+    );
+  }
+
+  if (!(petSprite instanceof HTMLCanvasElement) || !petSprite.dataset.eatSrc) {
+    vscode.postMessage({ type: 'feed' });
+    return;
+  }
+
+  button.setAttribute('disabled', '');
+  petSprite.dataset.spriteSrc = petSprite.dataset.eatSrc;
+  petSprite.dataset.frameSequence = '0,1,2,3';
+  petSprite.dataset.fps = '6';
+  petSprite.dataset.loop = 'false';
+  startPixelSprite(petSprite, () => vscode.postMessage({ type: 'feed' }));
 });
 document.querySelector('[data-action="openStage"]')?.addEventListener('click', () => {
   showScreen('stage');
@@ -87,19 +107,26 @@ function applyBattleAction(actionElement) {
   battleLog.textContent = `${actor === 'pet' ? '내 물짱이' : '적 물짱이'}의 공격! ${damage} 데미지`;
 }
 
-function startPixelSprite(canvas) {
+function startPixelSprite(canvas, onComplete) {
   const source = canvas.dataset.spriteSrc;
   const frameWidth = Number(canvas.dataset.frameWidth);
   const frameHeight = Number(canvas.dataset.frameHeight);
   const frameCount = Number(canvas.dataset.frameCount);
   const fps = Number(canvas.dataset.fps);
+  const frameSequence = (canvas.dataset.frameSequence ?? '').split(',').filter(Boolean).map(Number);
+  const loop = canvas.dataset.loop !== 'false';
   const hasValidNumbers = [frameWidth, frameHeight, frameCount, fps].every(
     (value) => Number.isFinite(value) && value > 0,
   );
+  const hasValidSequence =
+    frameSequence.length > 0 &&
+    frameSequence.every(
+      (frameIndex) => Number.isInteger(frameIndex) && frameIndex >= 0 && frameIndex < frameCount,
+    );
 
-  if (!source || !hasValidNumbers) {
+  if (!source || !hasValidNumbers || !hasValidSequence) {
     throw new Error(
-      'Tamagotchi 픽셀 스프라이트 초기화 실패: "data-pixel-sprite"의 소스 또는 프레임 설정이 유효하지 않습니다. "tamagotchi-view-provider.ts"의 "renderPixelSprite"를 확인하세요.',
+      'Tamagotchi 픽셀 스프라이트 초기화 실패: "data-pixel-sprite"의 소스, 프레임 설정 또는 "data-frame-sequence"가 유효하지 않습니다. "tamagotchi-view-provider.ts"의 "renderPixelSprite"를 확인하세요.',
     );
   }
 
@@ -111,14 +138,17 @@ function startPixelSprite(canvas) {
   }
 
   context.imageSmoothingEnabled = false;
+  const animationToken = {};
+  spriteAnimationTokens.set(canvas, animationToken);
   const spriteSheet = new window.Image();
   spriteSheet.addEventListener('load', () => {
+    if (spriteAnimationTokens.get(canvas) !== animationToken) {
+      return;
+    }
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const animationStartedAt = window.performance.now();
 
-    const drawFrame = (now) => {
-      const elapsedSeconds = (now - animationStartedAt) / 1_000;
-      const frameIndex = reduceMotion ? 0 : Math.floor(elapsedSeconds * fps) % frameCount;
+    const drawFrameIndex = (frameIndex) => {
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(
         spriteSheet,
@@ -131,9 +161,30 @@ function startPixelSprite(canvas) {
         canvas.width,
         canvas.height,
       );
+    };
+
+    const drawFrame = (now) => {
+      if (spriteAnimationTokens.get(canvas) !== animationToken) {
+        return;
+      }
+      const elapsedSeconds = (now - animationStartedAt) / 1_000;
+      const sequenceIndex = reduceMotion ? 0 : Math.floor(elapsedSeconds * fps);
+
+      if (!loop && sequenceIndex >= frameSequence.length) {
+        drawFrameIndex(frameSequence.at(-1));
+        spriteAnimationTokens.delete(canvas);
+        onComplete?.();
+        return;
+      }
+
+      const frameIndex = frameSequence[loop ? sequenceIndex % frameSequence.length : sequenceIndex];
+      drawFrameIndex(frameIndex);
 
       if (!reduceMotion) {
         window.requestAnimationFrame(drawFrame);
+      } else if (!loop) {
+        spriteAnimationTokens.delete(canvas);
+        onComplete?.();
       }
     };
 
