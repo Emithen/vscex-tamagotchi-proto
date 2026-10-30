@@ -1,5 +1,14 @@
 const vscode = acquireVsCodeApi();
 const spriteAnimationTokens = new WeakMap();
+const BATTLE_RESULT_REVEAL_DELAY_MS = 900;
+const BATTLE_HIT_DELAY_MS = 125;
+const HP_BAR_INNER_WIDTH = 40;
+const BATTLE_ANIMATION_FPS = {
+  idle: 4,
+  attack: 8,
+  hit: 8,
+  faint: 6,
+};
 
 document.querySelectorAll('[data-pixel-sprite]').forEach((element) => {
   if (element instanceof HTMLCanvasElement) {
@@ -83,12 +92,17 @@ function replayBattle(screen) {
 
   setTimeout(
     () => vscode.postMessage({ type: 'battleFinished' }),
-    Math.max(0, startedAt + duration - Date.now()) + 50,
+    Math.max(0, startedAt + duration - Date.now()) + BATTLE_RESULT_REVEAL_DELAY_MS,
   );
 }
 
 function applyBattleAction(actionElement) {
   const actor = actionElement.dataset.actor;
+  if (actor !== 'pet' && actor !== 'enemy') {
+    throw new Error(
+      `Tamagotchi Webview 전투 애니메이션 실패: 공격 주체 "${actor}"가 "pet" 또는 "enemy"가 아닙니다. "tamagotchi-view-provider.ts"의 "data-actor" 렌더링을 확인하세요.`,
+    );
+  }
   const target = actor === 'pet' ? 'enemy' : 'pet';
   const targetHp = Number(actionElement.dataset.targetHp);
   const damage = Number(actionElement.dataset.damage);
@@ -96,15 +110,106 @@ function applyBattleAction(actionElement) {
   const hpText = document.querySelector(`[data-hp-text="${target}"]`);
   const battleLog = document.querySelector('[data-battle-log]');
 
-  if (!(hpBar instanceof HTMLProgressElement) || !hpText || !battleLog) {
+  const maxHp = hpBar instanceof HTMLElement ? Number(hpBar.dataset.maxHp) : Number.NaN;
+  if (
+    !(hpBar instanceof HTMLElement) ||
+    !(hpText instanceof HTMLElement) ||
+    !(battleLog instanceof HTMLElement) ||
+    !Number.isFinite(maxHp) ||
+    maxHp <= 0
+  ) {
     throw new Error(
-      `Tamagotchi Webview 전투 재생 실패: 대상 "${target}"의 HP 요소를 찾지 못했습니다. "tamagotchi-view-provider.ts"의 "data-hp-bar"와 "data-hp-text"를 확인하세요.`,
+      `Tamagotchi Webview 전투 재생 실패: 대상 "${target}"의 HP 요소 또는 "data-max-hp"를 찾지 못했습니다. "tamagotchi-view-provider.ts"의 "data-hp-bar"와 "data-hp-text"를 확인하세요.`,
     );
   }
 
-  hpBar.value = targetHp;
-  hpText.textContent = `${targetHp} / ${hpBar.max}`;
   battleLog.textContent = `${actor === 'pet' ? '내 물짱이' : '적 물짱이'}의 공격! ${damage} 데미지`;
+
+  playCombatantAnimation(actor, 'attack', () => playCombatantAnimation(actor, 'idle'));
+  window.setTimeout(() => {
+    updatePixelHp(hpBar, hpText, targetHp, maxHp);
+    showDamageNumber(target, damage);
+    showHitFeedback(target);
+    if (targetHp <= 0) {
+      const targetSprite = getCombatantSprite(target);
+      targetSprite.dataset.defeated = 'true';
+      playCombatantAnimation(target, 'faint');
+      return;
+    }
+    playCombatantAnimation(target, 'hit', () => playCombatantAnimation(target, 'idle'));
+  }, BATTLE_HIT_DELAY_MS);
+}
+
+function updatePixelHp(hpBar, hpText, currentHp, maxHp) {
+  if (!Number.isFinite(currentHp) || currentHp < 0 || currentHp > maxHp) {
+    throw new Error(
+      `Tamagotchi Webview HP 갱신 실패: 현재 HP "${currentHp}"가 허용 범위 "0~${maxHp}"를 벗어났습니다. 전투 행동의 "data-target-hp"를 확인하세요.`,
+    );
+  }
+
+  const fillPixels =
+    currentHp === 0 ? 0 : Math.max(1, Math.floor((currentHp / maxHp) * HP_BAR_INNER_WIDTH));
+  const hpRatio = currentHp / maxHp;
+  hpBar.style.setProperty('--hp-fill-pixels', String(fillPixels));
+  hpBar.classList.toggle('is-low', hpRatio > 0.25 && hpRatio <= 0.5);
+  hpBar.classList.toggle('is-critical', hpRatio <= 0.25);
+  hpBar.setAttribute('aria-valuenow', String(currentHp));
+  hpText.textContent = `${currentHp} / ${maxHp}`;
+}
+
+function showDamageNumber(side, damage) {
+  const combatant = document.querySelector(`.combatant--${side}`);
+  if (!(combatant instanceof HTMLElement)) {
+    throw new Error(
+      `Tamagotchi Webview 데미지 표시 실패: 전투원 "${side}"의 컨테이너를 찾지 못했습니다. "tamagotchi-view-provider.ts"의 "combatant--${side}" 클래스를 확인하세요.`,
+    );
+  }
+
+  const damageNumber = document.createElement('span');
+  damageNumber.className = 'damage-number';
+  damageNumber.textContent = `-${damage}`;
+  damageNumber.setAttribute('aria-hidden', 'true');
+  combatant.append(damageNumber);
+  window.setTimeout(() => damageNumber.remove(), 600);
+}
+
+function showHitFeedback(side) {
+  const canvas = getCombatantSprite(side);
+  canvas.classList.remove('is-hit');
+  void canvas.offsetWidth;
+  canvas.classList.add('is-hit');
+  window.setTimeout(() => canvas.classList.remove('is-hit'), 300);
+}
+
+function playCombatantAnimation(side, animation, onComplete) {
+  const canvas = getCombatantSprite(side);
+  if (animation === 'idle' && canvas.dataset.defeated === 'true') {
+    return;
+  }
+  const source = canvas.dataset[`${animation}Src`];
+  const fps = BATTLE_ANIMATION_FPS[animation];
+
+  if (!source || !fps) {
+    throw new Error(
+      `Tamagotchi Webview 전투 애니메이션 실패: 전투원 "${side}"의 "${animation}" 소스 또는 FPS를 찾지 못했습니다. "renderCombatant"의 스프라이트 속성과 "BATTLE_ANIMATION_FPS"를 확인하세요.`,
+    );
+  }
+
+  canvas.dataset.spriteSrc = source;
+  canvas.dataset.frameSequence = '0,1,2,3';
+  canvas.dataset.fps = String(fps);
+  canvas.dataset.loop = animation === 'idle' ? 'true' : 'false';
+  startPixelSprite(canvas, onComplete);
+}
+
+function getCombatantSprite(side) {
+  const canvas = document.querySelector(`[data-combatant-sprite="${side}"]`);
+  if (!(canvas instanceof HTMLCanvasElement)) {
+    throw new Error(
+      `Tamagotchi Webview 전투 애니메이션 실패: 전투원 "${side}"의 Canvas를 찾지 못했습니다. "tamagotchi-view-provider.ts"의 "data-combatant-sprite"를 확인하세요.`,
+    );
+  }
+  return canvas;
 }
 
 function startPixelSprite(canvas, onComplete) {
@@ -168,7 +273,7 @@ function startPixelSprite(canvas, onComplete) {
         return;
       }
       const elapsedSeconds = (now - animationStartedAt) / 1_000;
-      const sequenceIndex = reduceMotion ? 0 : Math.floor(elapsedSeconds * fps);
+      const sequenceIndex = Math.floor(elapsedSeconds * fps);
 
       if (!loop && sequenceIndex >= frameSequence.length) {
         drawFrameIndex(frameSequence.at(-1));
@@ -180,13 +285,17 @@ function startPixelSprite(canvas, onComplete) {
       const frameIndex = frameSequence[loop ? sequenceIndex % frameSequence.length : sequenceIndex];
       drawFrameIndex(frameIndex);
 
-      if (!reduceMotion) {
-        window.requestAnimationFrame(drawFrame);
-      } else if (!loop) {
+      window.requestAnimationFrame(drawFrame);
+    };
+
+    if (reduceMotion) {
+      drawFrameIndex(frameSequence[loop ? 0 : frameSequence.length - 1]);
+      if (!loop) {
         spriteAnimationTokens.delete(canvas);
         onComplete?.();
       }
-    };
+      return;
+    }
 
     drawFrame(animationStartedAt);
   });

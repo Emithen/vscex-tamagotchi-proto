@@ -11,6 +11,9 @@
   --pixel-muted: var(--vscode-descriptionForeground);
   --pixel-accent: var(--vscode-button-background);
   --pixel-accent-foreground: var(--vscode-button-foreground);
+  --pixel-hp-good: var(--vscode-testing-iconPassed, #4caf50);
+  --pixel-hp-low: var(--vscode-editorWarning-foreground, #cca700);
+  --pixel-hp-critical: var(--vscode-testing-iconFailed, #f14c4c);
 }
 
 @media (min-width: 288px) and (min-height: 448px) {
@@ -225,6 +228,7 @@ progress {
 }
 
 .combatant {
+  position: relative;
   display: grid;
   min-width: 0;
   justify-items: center;
@@ -241,12 +245,92 @@ progress {
 }
 
 .combatant-image {
+  --sprite-facing: 1;
   width: 32px;
   height: 32px;
+  transform: scaleX(var(--sprite-facing));
 }
 
 .combatant--enemy .combatant-image {
-  transform: scaleX(-1);
+  --sprite-facing: -1;
+}
+
+.combatant-image.is-hit {
+  animation: pixel-hit-shake 250ms steps(4, end);
+}
+
+@keyframes pixel-hit-shake {
+  0%,
+  100% {
+    transform: translateX(0) scaleX(var(--sprite-facing));
+  }
+
+  25% {
+    transform: translateX(2px) scaleX(var(--sprite-facing));
+  }
+
+  50% {
+    transform: translateX(-2px) scaleX(var(--sprite-facing));
+  }
+
+  75% {
+    transform: translateX(1px) scaleX(var(--sprite-facing));
+  }
+}
+
+.pixel-hp {
+  --hp-fill-pixels: 40;
+  width: 42px;
+  height: 6px;
+  overflow: hidden;
+  border: 1px solid var(--pixel-border-color);
+  background: color-mix(in srgb, var(--vscode-foreground) 20%, transparent);
+}
+
+.pixel-hp-fill {
+  display: block;
+  width: calc(var(--hp-fill-pixels) * 1px);
+  height: 4px;
+  background: var(--pixel-hp-good);
+}
+
+.pixel-hp.is-low .pixel-hp-fill {
+  background: var(--pixel-hp-low);
+}
+
+.pixel-hp.is-critical .pixel-hp-fill {
+  background: var(--pixel-hp-critical);
+}
+
+.damage-number {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  color: var(--pixel-hp-critical);
+  font-size: 7px;
+  font-weight: 900;
+  line-height: 8px;
+  pointer-events: none;
+  animation: pixel-damage-rise 500ms steps(4, end) forwards;
+}
+
+@keyframes pixel-damage-rise {
+  0% {
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  75% {
+    visibility: visible;
+    transform: translateY(-8px);
+  }
+
+  100% {
+    visibility: hidden;
+    transform: translateY(-8px);
+  }
 }
 
 .versus {

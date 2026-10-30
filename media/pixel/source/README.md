@@ -4,6 +4,8 @@
 
 `coralfin-blink-concept.png`, `coralfin-eat-concept.png`, `coralfin-happy-concept.png`, `coralfin-hungry-concept.png`는 idle 원본을 캐릭터 anchor로 사용해 파생한 상태별 프로토타입입니다. 현재 시트는 생성 전략 재정비 전의 검증용 에셋으로, 체형과 외곽선의 수동 클린업이 더 필요합니다.
 
+`coralfin-attack-concept.png`, `coralfin-hit-concept.png`, `coralfin-faint-concept.png`, `coralfin-victory-concept.png`는 같은 anchor에서 파생한 전투 프로토타입입니다. 방향별 포즈와 타격 타이밍을 확정하기 전까지 최종 배포 에셋이 아닌 동작 검증용으로 취급합니다.
+
 제작 의도:
 
 - GBA 시대 핸드헬드 RPG 픽셀 아트

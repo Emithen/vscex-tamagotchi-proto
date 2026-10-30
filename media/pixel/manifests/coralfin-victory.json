@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "coralfin-victory",
+  "image": "../sprites/coralfin-victory.png",
+  "frame": {
+    "width": 32,
+    "height": 32,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "victory": {
+      "frames": [0, 1, 2, 3],
+      "fps": 5,
+      "loop": true
+    }
+  }
+}

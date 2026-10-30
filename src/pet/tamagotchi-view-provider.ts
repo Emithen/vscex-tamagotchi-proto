@@ -16,7 +16,13 @@ type PetSpriteUris = {
   eat: string;
   happy: string;
   hungry: string;
+  attack: string;
+  hit: string;
+  faint: string;
+  victory: string;
 };
+
+const BATTLE_RESULT_REVEAL_DELAY_MS = 900;
 
 export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'tamagotchi.petView';
@@ -121,7 +127,8 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       delays.push(getFullnessDecayDelay(petState));
     }
     if (battle) {
-      const battleDelay = battle.startedAt + battle.durationMs - Date.now();
+      const battleDelay =
+        battle.startedAt + battle.durationMs + BATTLE_RESULT_REVEAL_DELAY_MS - Date.now();
       if (battleDelay > 0) {
         delays.push(battleDelay);
       }
@@ -181,6 +188,10 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       eat: getSpriteUri('eat'),
       happy: getSpriteUri('happy'),
       hungry: getSpriteUri('hungry'),
+      attack: getSpriteUri('attack'),
+      hit: getSpriteUri('hit'),
+      faint: getSpriteUri('faint'),
+      victory: getSpriteUri('victory'),
     };
     const nonce = randomBytes(16).toString('hex');
     const contentSecurityPolicy = [
@@ -269,9 +280,9 @@ function renderBattle(battle: BattleRecord, stage: BattleStage, spriteUris: PetS
     <main class="screen battle-screen" data-battle-started-at="${battle.startedAt}" data-battle-duration="${battle.durationMs}">
       <p class="eyebrow">${stage.name}</p><h2>전투 진행 중</h2>
       <div class="combatants">
-        ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, spriteUris.idle)}
+        ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, spriteUris)}
         <span class="versus">VS</span>
-        ${renderCombatant('enemy', '적', battle.enemy.name, battle.enemy.stats.maxHp, spriteUris.idle)}
+        ${renderCombatant('enemy', '적', battle.enemy.name, battle.enemy.stats.maxHp, spriteUris)}
       </div>
       <p class="battle-log" data-battle-log>전투를 준비하고 있어요.</p>
       <ol hidden>${actions}</ol>
@@ -283,13 +294,24 @@ function renderCombatant(
   label: string,
   name: string,
   maxHp: number,
-  petImageUri: string,
+  spriteUris: PetSpriteUris,
 ): string {
   return `<section class="combatant combatant--${side}">
     <span class="combatant-label">${label}</span>
-    ${renderPixelSprite('combatant-image', petImageUri, `${label} ${name}`)}
+    ${renderPixelSprite('combatant-image', spriteUris.idle, `${label} ${name}`, {
+      extraAttributes: `data-combatant-sprite="${side}" data-idle-src="${spriteUris.idle}" data-attack-src="${spriteUris.attack}" data-hit-src="${spriteUris.hit}" data-faint-src="${spriteUris.faint}"`,
+    })}
     <strong>${name}</strong>
-    <progress data-hp-bar="${side}" max="${maxHp}" value="${maxHp}"></progress>
+    <div
+      class="pixel-hp"
+      data-hp-bar="${side}"
+      data-max-hp="${maxHp}"
+      role="progressbar"
+      aria-label="${label} ${name} HP"
+      aria-valuemin="0"
+      aria-valuemax="${maxHp}"
+      aria-valuenow="${maxHp}"
+    ><span class="pixel-hp-fill"></span></div>
     <span class="hp-text" data-hp-text="${side}">${maxHp} / ${maxHp}</span>
   </section>`;
 }
@@ -301,14 +323,18 @@ function renderBattleResult(
 ): string {
   const title =
     battle.result === 'victory' ? '승리!' : battle.result === 'defeat' ? '패배' : '무승부';
+  const resultSprite =
+    battle.result === 'victory'
+      ? { uri: spriteUris.victory, fps: 5, loop: true }
+      : battle.result === 'defeat'
+        ? { uri: spriteUris.faint, fps: 6, loop: false }
+        : { uri: spriteUris.idle, fps: 4, loop: true };
   return `<main class="screen result-screen">
     <p class="eyebrow">${stage.name} 결과</p>
-    ${renderPixelSprite(
-      'pet-image result-image',
-      battle.result === 'victory' ? spriteUris.happy : spriteUris.hungry,
-      battle.pet.name,
-      { fps: battle.result === 'victory' ? 4 : 3 },
-    )}
+    ${renderPixelSprite('pet-image result-image', resultSprite.uri, battle.pet.name, {
+      fps: resultSprite.fps,
+      loop: resultSprite.loop,
+    })}
     <h2>${title}</h2>
     <p class="result-reward">획득 경험치 <strong>+${battle.experienceReward}</strong></p>
     <button class="primary-button" type="button" data-action="claimBattleReward">보상 받기</button>
