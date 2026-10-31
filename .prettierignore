@@ -6,3 +6,5 @@ coverage
 *.vsix
 pnpm-lock.yaml
 media/*.png
+tools/sprite-studio/projects/*/project.json
+tools/sprite-studio/projects/*/output/

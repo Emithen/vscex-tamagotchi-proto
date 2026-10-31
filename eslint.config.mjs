@@ -66,4 +66,23 @@ export default [
       'no-unused-vars': 'error',
     },
   },
+  {
+    files: ['tools/sprite-studio/**/*.mjs'],
+
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        structuredClone: 'readonly',
+      },
+    },
+
+    rules: {
+      ...commonRules,
+      'no-undef': 'error',
+      'no-unused-vars': 'error',
+    },
+  },
 ];

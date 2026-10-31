@@ -1,0 +1,216 @@
+{
+  "version": 1,
+  "id": "starbud",
+  "canvas": {
+    "width": 32,
+    "height": 32
+  },
+  "anchor": {
+    "x": 16,
+    "y": 29
+  },
+  "palette": [
+    {
+      "name": "outline",
+      "symbol": "O",
+      "color": "#29213f"
+    },
+    {
+      "name": "body",
+      "symbol": "P",
+      "color": "#ed7fa6"
+    },
+    {
+      "name": "highlight",
+      "symbol": "H",
+      "color": "#ffc1d2"
+    },
+    {
+      "name": "belly",
+      "symbol": "C",
+      "color": "#ffe5b5"
+    },
+    {
+      "name": "eye",
+      "symbol": "E",
+      "color": "#17152b"
+    },
+    {
+      "name": "accent",
+      "symbol": "T",
+      "color": "#58c7b5"
+    },
+    {
+      "name": "foot",
+      "symbol": "F",
+      "color": "#62528f"
+    },
+    {
+      "name": "star",
+      "symbol": "S",
+      "color": "#ffd35f"
+    }
+  ],
+  "frames": [
+    {
+      "id": "idle-0",
+      "pixels": [
+        "................................",
+        "...............T.T..............",
+        "..............O.T.O.............",
+        "...............OTO..............",
+        "...............OTO..............",
+        ".............OOOOOO.............",
+        "..........OOOOOOOOOOOO..........",
+        ".........OOOOPPPPPPOOOO.........",
+        "........OOHHHHHSPPPPPOOO........",
+        ".......OOHHHHHSSSPPPPPOOO.......",
+        "......OOOHHHHHHSPPPPPPPOOO......",
+        "......OOPPHHHHHPPPPPPPPPOO......",
+        "......OOPPPHEPPPPPPHEPPPOO......",
+        ".....OOPPPPEEPPPPPPEEPPPPOO.....",
+        "....OOOPPPPEEPPPPPPEEPPPPOOO....",
+        "...OOOOPPPPEECCCCCCEEPPPPOOOO...",
+        "...OTOOPPPPPCCCCCCCCPPPPPOOTO...",
+        "...OTOOPPPPCCCCECECCCPPPPOOTO...",
+        "...OTOOPPPCCCCCCECCCCCPPPOOTO...",
+        "...OTTOOPPCCCCCCCCCCCCPPOOTTO...",
+        "...OOTOOPPCCCCCCCCCCCCPPOOTOO...",
+        "....OTOOOPPCCCCCCCCCCPPOOOTO....",
+        ".....OOOOOPPCCCCCCCCPPOOOOO.....",
+        ".......OOOOPPCCCCCCPPOOOO.......",
+        "......OOFOOOOPPPPPPOOOOFOO......",
+        ".....OFFFFOOOOOOOOOOOOFFFFO.....",
+        ".....OFFFFFFFOOOOOOFFFFFFFO.....",
+        ".....OFFFFFFFFO..OFFFFFFFFO.....",
+        "......OOFFFFOO....OOFFFFOO......",
+        ".......OOOOOO......OOOOOO.......",
+        "................................",
+        "................................"
+      ]
+    },
+    {
+      "id": "idle-1",
+      "pixels": [
+        "...............T.T..............",
+        "..............O.T.O.............",
+        "...............OTO..............",
+        "...............OTO..............",
+        ".............OOOOOO.............",
+        "..........OOOOOOOOOOOO..........",
+        ".........OOOOPPPPPPOOOO.........",
+        "........OOHHHHHSPPPPPOOO........",
+        ".......OOHHHHHSSSPPPPPOOO.......",
+        "......OOOHHHHHHSPPPPPPPOOO......",
+        "......OOPPHHHHHPPPPPPPPPOO......",
+        "......OOPPPHEPPPPPPHEPPPOO......",
+        ".....OOPPPPEEPPPPPPEEPPPPOO.....",
+        "....OOOPPPPEEPPPPPPEEPPPPOOO....",
+        "...OOOOPPPPEECCCCCCEEPPPPOOOO...",
+        "...OTOOPPPPPCCCCCCCCPPPPPOOTO...",
+        "...OTOOPPPPCCCCECECCCPPPPOOTO...",
+        "...OTOOPPPCCCCCCECCCCCPPPOOTO...",
+        "...OTTOOPPCCCCCCCCCCCCPPOOTTO...",
+        "...OOTOOPPCCCCCCCCCCCCPPOOTOO...",
+        "....OTOOOPPCCCCCCCCCCPPOOOTO....",
+        ".....OOOOOPPCCCCCCCCPPOOOOO.....",
+        ".......OOOOPPCCCCCCPPOOOO.......",
+        "......OOFOOOOPPPPPPOOOOFOO......",
+        ".....OFFFFOOOOOOOOOOOOFFFFO.....",
+        ".....OFFFFFFFOOOOOOFFFFFFFO.....",
+        ".....OFFFFFFFFO..OFFFFFFFFO.....",
+        "......OOFFFFOO....OOFFFFOO......",
+        ".......OOOOOO......OOOOOO.......",
+        "................................",
+        "................................",
+        "................................"
+      ]
+    },
+    {
+      "id": "idle-2",
+      "pixels": [
+        "................................",
+        "...............T.T..............",
+        "..............O.T.O.............",
+        "...............OTO..............",
+        "...............OTO..............",
+        ".............OOOOOO.............",
+        "..........OOOOOOOOOOOO..........",
+        ".........OOOOPPPPPPOOOO.........",
+        "........OOHHHHHSPPPPPOOO........",
+        ".......OOHHHHHSSSPPPPPOOO.......",
+        "......OOOHHHHHHSPPPPPPPOOO......",
+        "......OOPPHHHHHPPPPPPPPPOO......",
+        "......OOPPPHEPPPPPPHEPPPOO......",
+        ".....OOPPPPEEPPPPPPEEPPPPOO.....",
+        "....OOOPPPPEEPPPPPPEEPPPPOOO....",
+        "...OOOOPPPPEECCCCCCEEPPPPOOOO...",
+        "...OTOOPPPPPCCCCCCCCPPPPPOOTO...",
+        "...OTOOPPPPCCCCECECCCPPPPOOTO...",
+        "...OTOOPPPCCCCCCECCCCCPPPOOTO...",
+        "...OTTOOPPCCCCCCCCCCCCPPOOTTO...",
+        "...OOTOOPPCCCCCCCCCCCCPPOOTOO...",
+        "....OTOOOPPCCCCCCCCCCPPOOOTO....",
+        ".....OOOOOPPCCCCCCCCPPOOOOO.....",
+        ".......OOOOPPCCCCCCPPOOOO.......",
+        "......OOFOOOOPPPPPPOOOOFOO......",
+        ".....OFFFFOOOOOOOOOOOOFFFFO.....",
+        ".....OFFFFFFFOOOOOOFFFFFFFO.....",
+        ".....OFFFFFFFFO..OFFFFFFFFO.....",
+        "......OOFFFFOO....OOFFFFOO......",
+        ".......OOOOOO......OOOOOO.......",
+        "................................",
+        "................................"
+      ]
+    },
+    {
+      "id": "idle-3",
+      "pixels": [
+        "................................",
+        "...............T.T..............",
+        "..............O.T.O.............",
+        "...............OTO..............",
+        "...............OTO..............",
+        ".............OOOOOO.............",
+        "..........OOOOOOOOOOOO..........",
+        ".........OOOOPPPPPPOOOO.........",
+        "........OOHHHHHSPPPPPOOO........",
+        ".......OOHHHHHSSSPPPPPOOO.......",
+        "......OOOHHHHHHSPPPPPPPOOO......",
+        "......OOPPHHHHHPPPPPPPPPOO......",
+        "......OOPPPPPPPPPPPPPPPPOO......",
+        ".....OOPPPPPPPPPPPPPPPPPPOO.....",
+        "....OOOPPPPEEPPPPPPEEPPPPOOO....",
+        "...OOOOPPPPPPCCCCCCPPPPPPOOOO...",
+        "...OTOOPPPPPCCCCCCCCPPPPPOOTO...",
+        "...OTOOPPPPCCCCECECCCPPPPOOTO...",
+        "...OTOOPPPCCCCCCECCCCCPPPOOTO...",
+        "...OTTOOPPCCCCCCCCCCCCPPOOTTO...",
+        "...OOTOOPPCCCCCCCCCCCCPPOOTOO...",
+        "....OTOOOPPCCCCCCCCCCPPOOOTO....",
+        ".....OOOOOPPCCCCCCCCPPOOOOO.....",
+        ".......OOOOPPCCCCCCPPOOOO.......",
+        "......OOFOOOOPPPPPPOOOOFOO......",
+        ".....OFFFFOOOOOOOOOOOOFFFFO.....",
+        ".....OFFFFFFFOOOOOOFFFFFFFO.....",
+        ".....OFFFFFFFFO..OFFFFFFFFO.....",
+        "......OOFFFFOO....OOFFFFOO......",
+        ".......OOOOOO......OOOOOO.......",
+        "................................",
+        "................................"
+      ]
+    }
+  ],
+  "animations": {
+    "idle": {
+      "frames": [
+        "idle-0",
+        "idle-1",
+        "idle-2",
+        "idle-3"
+      ],
+      "fps": 4,
+      "loop": true
+    }
+  }
+}

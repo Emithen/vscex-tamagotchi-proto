@@ -37,6 +37,8 @@ pnpm run watch         # TypeScript 변경 감시
 pnpm run lint          # TypeScript와 Webview JavaScript 린트
 pnpm run validate:pixel-assets # 스프라이트 크기·팔레트·투명도 검사
 pnpm run normalize:pixel-sheet -- <input> <output> <palette> # 생성 시트 32×32px 정규화
+pnpm sprite-studio help # 사람과 AI가 함께 사용하는 스프라이트 제작 CLI
+pnpm run test:sprite-studio # Sprite Studio 코어 검사
 pnpm run format:check  # 포맷 변경 없이 검사
 pnpm run format        # Prettier로 파일 수정
 pnpm run test          # VS Code 테스트 실행
@@ -78,6 +80,7 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - `src/battle/battle-state-store.ts`: 전투 상태 영구 저장
 - `media/pet-view/`: HTML, CSS, 브라우저 측 JavaScript
 - `media/pixel/`: 픽셀 원본, 스프라이트, manifest, 팔레트
+- `tools/sprite-studio/`: 공용 제작 코어와 AI agent용 CLI
 - `scripts/validate-pixel-assets.mjs`: 픽셀 에셋 규격 검사
 - `docs/pixel-perfect.md`: 픽셀 렌더링과 에셋 규격, 단계별 구축 상태
 - `src/test/`: 테스트

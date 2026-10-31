@@ -44,14 +44,16 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\"",
+    "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\" \"tools/sprite-studio/**/*.mjs\"",
+    "sprite-studio": "node tools/sprite-studio/cli/index.mjs",
+    "test:sprite-studio": "node --test tools/sprite-studio/test/*.test.mjs",
     "normalize:pixel-sheet": "node scripts/normalize-pixel-sheet.mjs",
     "validate:pixel-assets": "node scripts/validate-pixel-assets.mjs",
-    "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"*.{json,mjs}\"",
+    "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
     "test": "vscode-test",
     "validate": "pnpm run format && pnpm run compile && pnpm run lint",
-    "verify": "pnpm run format:check && pnpm run validate:pixel-assets && pnpm run test"
+    "verify": "pnpm run format:check && pnpm run validate:pixel-assets && pnpm run test:sprite-studio && pnpm run test"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
