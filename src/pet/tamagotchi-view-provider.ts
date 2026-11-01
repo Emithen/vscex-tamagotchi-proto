@@ -1,28 +1,15 @@
 import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
-import {
-  GRASSLAND_STAGE,
-  getBattleStage,
-  type BattleRecord,
-  type BattleStage,
-} from '../battle/battle';
+import type { BattleRecord } from '../battle/battle';
 import { BattleService } from '../battle/battle-service';
-import { MIN_FULLNESS, type PetState, clampFullness, getFullnessDecayDelay } from './pet-state';
+import {
+  BATTLE_RESULT_REVEAL_DELAY_MS,
+  createViewSnapshot,
+  type HostMessage,
+  type WebviewMessageType,
+} from '../shared/protocol';
+import { MIN_FULLNESS, type PetState, getFullnessDecayDelay } from './pet-state';
 import { PetService } from './pet-service';
-
-type PetSpriteUris = {
-  idle: string;
-  blink: string;
-  eat: string;
-  happy: string;
-  hungry: string;
-  attack: string;
-  hit: string;
-  faint: string;
-  victory: string;
-};
-
-const BATTLE_RESULT_REVEAL_DELAY_MS = 900;
 
 export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'tamagotchi.petView';
@@ -35,13 +22,22 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     private readonly battleService: BattleService,
   ) {}
 
-  async resolveWebviewView(webviewView: vscode.WebviewView): Promise<void> {
+  private get webviewRootUri(): vscode.Uri {
+    return vscode.Uri.joinPath(this.extensionUri, 'dist', 'webview');
+  }
+
+  private get spriteRootUri(): vscode.Uri {
+    return vscode.Uri.joinPath(this.extensionUri, 'media', 'pixel', 'sprites');
+  }
+
+  resolveWebviewView(webviewView: vscode.WebviewView): void {
     this.clearRefreshTimer();
     this.webviewView = webviewView;
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [vscode.Uri.joinPath(this.extensionUri, 'media')],
+      localResourceRoots: [this.webviewRootUri, this.spriteRootUri],
     };
+    webviewView.webview.html = this.getHtml(webviewView.webview);
 
     const messageSubscription = webviewView.webview.onDidReceiveMessage(async (message) => {
       try {
@@ -76,8 +72,6 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
         this.webviewView = undefined;
       }
     });
-
-    await this.refresh();
   }
 
   public async refresh(): Promise<void> {
@@ -89,12 +83,15 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
 
     const petState = await this.petService.getState();
     const battle = this.battleService.getBattle();
-    const html = await this.getHtml(webviewView.webview, petState, battle);
     if (this.webviewView !== webviewView) {
       return;
     }
 
-    webviewView.webview.html = html;
+    const message: HostMessage = {
+      type: 'snapshot',
+      snapshot: createViewSnapshot(petState, battle),
+    };
+    await webviewView.webview.postMessage(message);
     this.scheduleRefresh(webviewView, petState, battle);
   }
 
@@ -106,9 +103,9 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       await this.battleService.startBattle(getMessageStageId(message));
     } else if (messageType === 'claimBattleReward') {
       await this.battleService.claimReward();
-    } else if (messageType !== 'battleFinished') {
+    } else if (messageType !== 'ready' && messageType !== 'battleFinished') {
       throw new Error(
-        `Tamagotchi Webview 메시지 검증 실패: 요청 "${messageType}"을 지원하지 않습니다. "media/pet-view/main.js"의 메시지 타입을 확인하세요.`,
+        `Tamagotchi Webview 메시지 검증 실패: 요청 "${messageType}"을 지원하지 않습니다. "src/shared/protocol.ts"의 "WebviewMessage" 타입을 확인하세요.`,
       );
     }
   }
@@ -161,38 +158,8 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     this.refreshTimer = undefined;
   }
 
-  private async getHtml(
-    webview: vscode.Webview,
-    petState: PetState,
-    battle: BattleRecord | undefined,
-  ): Promise<string> {
-    const viewRootUri = vscode.Uri.joinPath(this.extensionUri, 'media', 'pet-view');
-    const templateBytes = await vscode.workspace.fs.readFile(
-      vscode.Uri.joinPath(viewRootUri, 'index.html'),
-    );
-    const getSpriteUri = (animation: keyof PetSpriteUris): string =>
-      webview
-        .asWebviewUri(
-          vscode.Uri.joinPath(
-            this.extensionUri,
-            'media',
-            'pixel',
-            'sprites',
-            `coralfin-${animation}.png`,
-          ),
-        )
-        .toString();
-    const spriteUris: PetSpriteUris = {
-      idle: getSpriteUri('idle'),
-      blink: getSpriteUri('blink'),
-      eat: getSpriteUri('eat'),
-      happy: getSpriteUri('happy'),
-      hungry: getSpriteUri('hungry'),
-      attack: getSpriteUri('attack'),
-      hit: getSpriteUri('hit'),
-      faint: getSpriteUri('faint'),
-      victory: getSpriteUri('victory'),
-    };
+  /** Webview 앱을 담는 HTML 셸을 만든다. 화면은 `webview/` 앱이 snapshot으로 렌더링한다. */
+  private getHtml(webview: vscode.Webview): string {
     const nonce = randomBytes(16).toString('hex');
     const contentSecurityPolicy = [
       "default-src 'none'",
@@ -200,184 +167,31 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
       `style-src ${webview.cspSource}`,
       `script-src 'nonce-${nonce}'`,
     ].join('; ');
+    const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this.webviewRootUri, 'style.css'));
+    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this.webviewRootUri, 'main.js'));
+    const spriteBaseUri = webview.asWebviewUri(this.spriteRootUri);
 
-    return new TextDecoder()
-      .decode(templateBytes)
-      .replace('{{contentSecurityPolicy}}', contentSecurityPolicy)
-      .replace('{{nonce}}', nonce)
-      .replace('{{mainContent}}', renderMainContent(petState, battle, spriteUris))
-      .replace(
-        '{{styleUri}}',
-        webview.asWebviewUri(vscode.Uri.joinPath(viewRootUri, 'style.css')).toString(),
-      )
-      .replace(
-        '{{scriptUri}}',
-        webview.asWebviewUri(vscode.Uri.joinPath(viewRootUri, 'main.js')).toString(),
-      );
+    return `<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="${contentSecurityPolicy}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="${styleUri}" />
+  </head>
+  <body>
+    <div id="app" data-sprite-base-uri="${spriteBaseUri}"></div>
+    <script type="module" nonce="${nonce}" src="${scriptUri}"></script>
+  </body>
+</html>`;
   }
 }
 
-function renderMainContent(
-  petState: PetState,
-  battle: BattleRecord | undefined,
-  spriteUris: PetSpriteUris,
-): string {
-  if (!battle) {
-    return renderHome(petState, GRASSLAND_STAGE, spriteUris);
-  }
-  const stage = getBattleStage(battle.stageId);
-  return Date.now() >= battle.startedAt + battle.durationMs
-    ? renderBattleResult(battle, stage, spriteUris)
-    : renderBattle(battle, stage, spriteUris);
-}
-
-function renderHome(petState: PetState, stage: BattleStage, spriteUris: PetSpriteUris): string {
-  const fullness = clampFullness(petState.fullness);
-  const homeSprite =
-    fullness <= 2
-      ? { uri: spriteUris.hungry, fps: 3, frames: [0, 1, 2, 3] }
-      : fullness >= 9
-        ? { uri: spriteUris.happy, fps: 4, frames: [0, 1, 2, 3] }
-        : { uri: spriteUris.blink, fps: 4, frames: [0, 0, 0, 0, 0, 0, 1, 2, 3] };
-  return `
-    <main class="screen home-screen" data-screen="home">
-      ${renderPixelSprite('pet-image', homeSprite.uri, petState.name, {
-        fps: homeSprite.fps,
-        frames: homeSprite.frames,
-        extraAttributes: `data-home-pet-sprite data-eat-src="${spriteUris.eat}"`,
-      })}
-      <h2>${petState.name}</h2>
-      <p class="experience">경험치 ${petState.experience}</p>
-      <p class="fullness">포만감: ${fullness} / 10</p>
-      <progress aria-label="포만감" max="10" value="${fullness}"></progress>
-      <div class="button-stack">
-        <button class="primary-button" type="button" data-action="feed">먹이 주기</button>
-        <button class="secondary-button" type="button" data-action="openStage">스테이지 선택</button>
-      </div>
-    </main>
-    <main class="screen stage-screen" data-screen="stage" hidden>
-      <p class="eyebrow">스테이지 선택</p><h2>${stage.name}</h2>
-      <div class="stage-card">
-        ${renderPixelSprite('stage-enemy-image', spriteUris.idle, `적 ${stage.enemy.name}`)}
-        <p class="stage-enemy-name">적: ${stage.enemy.name}</p>
-        <p class="stage-reward">승리 보상: 경험치 +${stage.victoryExperience}</p>
-      </div>
-      <div class="button-stack">
-        <button class="primary-button" type="button" data-action="startBattle" data-stage-id="${stage.id}">전투 시작</button>
-        <button class="secondary-button" type="button" data-action="openHome">돌아가기</button>
-      </div>
-    </main>`;
-}
-
-function renderBattle(battle: BattleRecord, stage: BattleStage, spriteUris: PetSpriteUris): string {
-  const actions = battle.actions
-    .map(
-      (action) =>
-        `<li data-battle-action data-at-ms="${action.atMs}" data-actor="${action.actor}" data-damage="${action.damage}" data-target-hp="${action.targetHp}"></li>`,
-    )
-    .join('');
-  return `
-    <main class="screen battle-screen" data-battle-started-at="${battle.startedAt}" data-battle-duration="${battle.durationMs}">
-      <p class="eyebrow">${stage.name}</p><h2>전투 진행 중</h2>
-      <div class="combatants">
-        ${renderCombatant('pet', '내 펫', battle.pet.name, battle.pet.stats.maxHp, spriteUris)}
-        <span class="versus">VS</span>
-        ${renderCombatant('enemy', '적', battle.enemy.name, battle.enemy.stats.maxHp, spriteUris)}
-      </div>
-      <p class="battle-log" data-battle-log>전투를 준비하고 있어요.</p>
-      <ol hidden>${actions}</ol>
-    </main>`;
-}
-
-function renderCombatant(
-  side: 'pet' | 'enemy',
-  label: string,
-  name: string,
-  maxHp: number,
-  spriteUris: PetSpriteUris,
-): string {
-  return `<section class="combatant combatant--${side}">
-    <span class="combatant-label">${label}</span>
-    ${renderPixelSprite('combatant-image', spriteUris.idle, `${label} ${name}`, {
-      extraAttributes: `data-combatant-sprite="${side}" data-idle-src="${spriteUris.idle}" data-attack-src="${spriteUris.attack}" data-hit-src="${spriteUris.hit}" data-faint-src="${spriteUris.faint}"`,
-    })}
-    <strong>${name}</strong>
-    <div
-      class="pixel-hp"
-      data-hp-bar="${side}"
-      data-max-hp="${maxHp}"
-      role="progressbar"
-      aria-label="${label} ${name} HP"
-      aria-valuemin="0"
-      aria-valuemax="${maxHp}"
-      aria-valuenow="${maxHp}"
-    ><span class="pixel-hp-fill"></span></div>
-    <span class="hp-text" data-hp-text="${side}">${maxHp} / ${maxHp}</span>
-  </section>`;
-}
-
-function renderBattleResult(
-  battle: BattleRecord,
-  stage: BattleStage,
-  spriteUris: PetSpriteUris,
-): string {
-  const title =
-    battle.result === 'victory' ? '승리!' : battle.result === 'defeat' ? '패배' : '무승부';
-  const resultSprite =
-    battle.result === 'victory'
-      ? { uri: spriteUris.victory, fps: 5, loop: true }
-      : battle.result === 'defeat'
-        ? { uri: spriteUris.faint, fps: 6, loop: false }
-        : { uri: spriteUris.idle, fps: 4, loop: true };
-  return `<main class="screen result-screen">
-    <p class="eyebrow">${stage.name} 결과</p>
-    ${renderPixelSprite('pet-image result-image', resultSprite.uri, battle.pet.name, {
-      fps: resultSprite.fps,
-      loop: resultSprite.loop,
-    })}
-    <h2>${title}</h2>
-    <p class="result-reward">획득 경험치 <strong>+${battle.experienceReward}</strong></p>
-    <button class="primary-button" type="button" data-action="claimBattleReward">보상 받기</button>
-  </main>`;
-}
-
-function renderPixelSprite(
-  className: string,
-  spriteUri: string,
-  label: string,
-  options: {
-    fps?: number;
-    frames?: number[];
-    loop?: boolean;
-    extraAttributes?: string;
-  } = {},
-): string {
-  const fps = options.fps ?? 4;
-  const frames = options.frames ?? [0, 1, 2, 3];
-  const loop = options.loop ?? true;
-  return `<canvas
-    class="pixel-sprite ${className}"
-    width="32"
-    height="32"
-    data-pixel-sprite
-    data-sprite-src="${spriteUri}"
-    data-frame-width="32"
-    data-frame-height="32"
-    data-frame-count="4"
-    data-frame-sequence="${frames.join(',')}"
-    data-fps="${fps}"
-    data-loop="${loop}"
-    ${options.extraAttributes ?? ''}
-    role="img"
-    aria-label="${label}"
-  ></canvas>`;
-}
-
-function getMessageType(message: unknown): string {
+function getMessageType(message: unknown): WebviewMessageType | 'unknown' {
   if (typeof message !== 'object' || message === null || !('type' in message)) {
     return 'unknown';
   }
-  return typeof message.type === 'string' ? message.type : 'unknown';
+  return typeof message.type === 'string' ? (message.type as WebviewMessageType) : 'unknown';
 }
 
 function getMessageStageId(message: unknown): string {
@@ -388,7 +202,7 @@ function getMessageStageId(message: unknown): string {
     typeof message.stageId !== 'string'
   ) {
     throw new Error(
-      'Tamagotchi Webview 전투 시작 실패: 요청에서 "stageId"를 찾지 못했습니다. "media/pet-view/main.js"의 전투 시작 메시지를 확인하세요.',
+      'Tamagotchi Webview 전투 시작 실패: 요청에서 "stageId"를 찾지 못했습니다. "webview/src/app.tsx"의 전투 시작 메시지를 확인하세요.',
     );
   }
 

@@ -13,11 +13,19 @@ pnpm install
 
 ## 실행과 디버깅
 
-VS Code에서 저장소를 열고 `F5`를 누릅니다. `Run Extension` 실행 구성이 TypeScript 감시 작업을 시작한 뒤 Extension Development Host를 엽니다.
+VS Code에서 저장소를 열고 `F5`를 누릅니다. `Run Extension` 실행 구성이 Extension TypeScript 감시 작업과 Webview Vite 빌드 감시 작업을 함께 시작한 뒤 Extension Development Host를 엽니다. Webview 코드를 고친 뒤에는 Extension Development Host에서 View를 다시 열거나 `Developer: Reload Webviews`를 실행합니다.
 
 새 창의 Activity Bar에서 `Tamagotchi`를 선택하면 펫 화면을 확인할 수 있습니다.
 
 Command Palette에서 `Tamagotchi (개발): 포만감 설정`을 실행하면 포만감을 `0~10` 사이의 정수로 직접 바꿀 수 있습니다.
+
+### Webview 브라우저 개발 모드
+
+```sh
+pnpm run dev:webview
+```
+
+VS Code 없이 브라우저에서 Webview 앱을 HMR로 확인합니다. Extension Host 대신 `webview/src/dev/mock-host.ts`가 메모리 상태로 응답하며, `http://localhost:5173/?fullness=2`처럼 초기 포만감을 지정할 수 있습니다. VS Code 테마 변수는 `webview/src/dev/vscode-theme.css`가 Dark Modern 값으로 흉내 냅니다. 최종 확인은 Extension Development Host에서 합니다.
 
 ### Pixel Perfect 수동 검수
 
@@ -32,9 +40,14 @@ Tamagotchi View의 너비와 높이를 바꾸며 다음 배율 전환을 확인�
 ## 주요 명령
 
 ```sh
-pnpm run compile       # TypeScript 컴파일
-pnpm run watch         # TypeScript 변경 감시
-pnpm run lint          # TypeScript와 Webview JavaScript 린트
+pnpm run compile       # Extension 컴파일과 Webview 빌드
+pnpm run compile:extension # Extension TypeScript만 컴파일
+pnpm run build:webview # Webview 타입 검사와 Vite 빌드 (dist/webview)
+pnpm run watch         # Extension TypeScript 변경 감시
+pnpm run watch:webview # Webview 변경 감시 빌드
+pnpm run dev:webview   # 브라우저 mock 개발 서버
+pnpm run test:webview  # Webview 순수 모듈 Vitest 검사
+pnpm run lint          # Extension, Webview, Sprite Studio 린트
 pnpm run validate:pixel-assets # 스프라이트 크기·팔레트·투명도 검사
 pnpm run normalize:pixel-sheet -- <input> <output> <palette> # 생성 시트 32×32px 정규화
 pnpm sprite-studio help # 사람과 AI가 함께 사용하는 스프라이트 제작 CLI
@@ -42,7 +55,7 @@ pnpm run test:sprite-studio # Sprite Studio 코어 검사
 pnpm run format:check  # 포맷 변경 없이 검사
 pnpm run format        # Prettier로 파일 수정
 pnpm run test          # VS Code 테스트 실행
-pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
+pnpm run verify        # 포맷, 에셋, Sprite Studio, Webview, VS Code 테스트 전체 검증
 ```
 
 ### Sprite Studio
@@ -80,6 +93,8 @@ pnpm sprite-studio export <project.json> <output-directory> # PNG·manifest·미
 - 전투 생성, 종료 전 보상 거부, 보상 중복 방지
 - 전투 상태 저장, 삭제, 스키마 검증
 
+Webview 테스트는 `webview/src/**/*.test.ts`에 있으며 `pnpm run test:webview`로 스프라이트 프레임 계산, manifest 기반 애니메이션 조회, HP 게이지 계산을 검사합니다.
+
 Sprite Studio 코어 테스트는 `tools/sprite-studio/test/`에 있으며 `pnpm run test:sprite-studio`로 편집 명령, 픽셀 diff, 도형 채우기, 팔레트 검증을 검사합니다.
 
 상태 규칙을 변경할 때는 해당 테스트를 먼저 갱신하고 `pnpm run verify`로 전체 검증합니다.
@@ -90,11 +105,13 @@ Sprite Studio 코어 테스트는 `tools/sprite-studio/test/`에 있으며 `pnpm
 - `src/pet/pet-state.ts`: 상태 타입과 변경 규칙
 - `src/pet/pet-service.ts`: 상태 처리 흐름
 - `src/pet/pet-state-store.ts`: 영구 저장
-- `src/pet/tamagotchi-view-provider.ts`: Webview 연결과 렌더링
+- `src/pet/tamagotchi-view-provider.ts`: Webview HTML 셸과 snapshot 전송, 메시지 처리
+- `src/shared/protocol.ts`: Extension과 Webview가 공유하는 메시지·snapshot 타입
 - `src/battle/battle.ts`: 스테이지 설정과 전투 계산
 - `src/battle/battle-service.ts`: 전투 시작과 보상 처리
 - `src/battle/battle-state-store.ts`: 전투 상태 영구 저장
-- `media/pet-view/`: HTML, CSS, 브라우저 측 JavaScript
+- `webview/`: Vite + Preact Webview 앱 (`src/screens`, `src/components`, `src/pixel`, `src/dev`)
+- `dist/webview/`: Webview 빌드 결과 (Git 제외)
 - `media/pixel/`: 픽셀 원본, 스프라이트, manifest, 팔레트
 - `tools/sprite-studio/`: 공용 제작 코어와 AI agent용 CLI
 - `scripts/validate-pixel-assets.mjs`: 픽셀 에셋 규격 검사

@@ -70,7 +70,7 @@ Webview App
               └── Accessibility DOM
 ```
 
-현재는 Extension Host가 상태 변경마다 Webview HTML 전체를 교체합니다. 애니메이션 재생이 본격화되면 HTML은 한 번만 로드하고 Extension Host가 상태 snapshot을 보내는 구조로 전환합니다.
+HTML은 View 생성 시 한 번만 로드하고 Extension Host는 상태 snapshot만 보냅니다. Webview 앱은 `webview/`의 Preact 컴포넌트로 작성하며, 스프라이트 재생은 `webview/src/pixel/`의 순수 TypeScript 모듈이 담당합니다.
 
 ## 구축 단계
 

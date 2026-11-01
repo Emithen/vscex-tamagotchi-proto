@@ -5,10 +5,10 @@
 확장은 상태 계산, 저장, 화면 연결을 분리합니다.
 
 ```text
-Webview
-  │ feed / startBattle / claimBattleReward 메시지
-  ▼
-TamagotchiViewProvider
+Webview 앱 (webview/, Preact)
+  │ ready / feed / startBattle / claimBattleReward / battleFinished 메시지
+  ▼                              ▲ snapshot 메시지
+TamagotchiViewProvider ──────────┘
   ├── PetService → PetStateStore
   └── BattleService → BattleStateStore
                               │
@@ -54,22 +54,26 @@ type PetState = {
 
 ### Webview
 
-`src/pet/tamagotchi-view-provider.ts`는 상태를 읽어 HTML 템플릿에 반영하고 Webview 메시지를 처리합니다. 화면 리소스는 `media/pet-view/`에 분리되어 있습니다.
+Webview 화면은 `webview/`의 Preact 앱이 담당하고, Extension Host는 상태만 전달합니다. 두 영역이 주고받는 메시지와 화면 상태 타입은 `src/shared/protocol.ts` 한 곳에서 정의하며 양쪽이 같은 파일을 import합니다.
+
+- `src/pet/tamagotchi-view-provider.ts`: View가 열릴 때 HTML 셸을 한 번만 설정하고, 상태가 바뀔 때마다 `{ type: "snapshot" }` 메시지로 `ViewSnapshot`을 보냅니다.
+- `webview/src/app.tsx`: snapshot을 받아 홈, 스테이지, 전투, 결과 화면을 선택합니다. 홈과 스테이지 사이의 전환처럼 Extension 상태와 무관한 화면 상태는 Webview 안에서만 유지합니다.
+- `webview/src/bridge.ts`: VS Code 안에서는 `acquireVsCodeApi`를 사용하고, 브라우저 개발 모드에서는 순수 상태 함수로 동작하는 `webview/src/dev/mock-host.ts`를 사용합니다.
 
 먹이 주기 흐름은 다음과 같습니다.
 
-1. `main.js`가 `{ type: "feed" }` 메시지를 보냅니다.
+1. Webview가 eat 애니메이션을 한 번 재생한 뒤 `{ type: "feed" }` 메시지를 보냅니다.
 2. Provider가 `PetService.feed()`를 호출합니다.
 3. 서비스가 새 상태를 계산하고 저장합니다.
-4. Provider가 저장된 상태로 Webview HTML을 다시 렌더링합니다.
+4. Provider가 새 snapshot을 보내고 Webview가 바뀐 부분만 다시 렌더링합니다.
 
-Webview는 로컬 `media` 디렉터리만 리소스 루트로 허용하며, 스크립트 실행에는 매 렌더링 시 생성한 nonce와 Content Security Policy를 사용합니다.
+Webview 앱은 Vite로 `dist/webview/main.js`와 `dist/webview/style.css`에 고정된 이름으로 빌드됩니다. Webview는 `dist/webview`와 `media/pixel/sprites`만 리소스 루트로 허용하며, 스크립트 실행에는 View 생성 시 만든 nonce와 Content Security Policy를 사용합니다. 스프라이트 기본 경로는 HTML 셸의 `data-sprite-base-uri`로 전달합니다.
 
 Webview 콘텐츠는 144×216 논리 화면인 `.pixel-canvas`에 렌더링됩니다. `.pixel-viewport`는 가용 너비와 높이에 따라 1×, 2×, 3× 정수 배율만 사용하고 분수 배율로 인한 픽셀 경계 흐림을 방지합니다. 세부 규격과 단계별 전환 계획은 `docs/pixel-perfect.md`에 기록합니다.
 
-`media/pixel/manifests/`는 스프라이트 프레임 크기, 애니메이션 FPS, 반복 여부, 팔레트 제한을 정의합니다. `scripts/validate-pixel-assets.mjs`는 manifest와 PNG를 함께 읽어 시트 크기, 프레임 인덱스, 색상 수, 알파값을 검증합니다. Webview의 Canvas 렌더러는 `imageSmoothingEnabled = false`로 스프라이트를 재생하며 모션 감소 설정에서는 첫 프레임을 유지합니다.
+`media/pixel/manifests/`는 스프라이트 프레임 크기, 애니메이션 FPS, 반복 여부, 팔레트 제한을 정의합니다. `scripts/validate-pixel-assets.mjs`는 manifest와 PNG를 함께 읽어 시트 크기, 프레임 인덱스, 색상 수, 알파값을 검증합니다. Webview는 빌드 시 이 manifest를 번들에 포함해 프레임 크기, FPS, 반복 여부를 그대로 사용합니다(`webview/src/pixel/sprites.ts`). Canvas 렌더러는 `imageSmoothingEnabled = false`로 스프라이트를 재생하며 모션 감소 설정에서는 첫 프레임을 유지합니다.
 
-View가 보이는 동안에는 `nextFullnessDecayAt`에 맞춰 다음 화면 갱신을 한 번 예약합니다. View가 숨겨지거나 닫히면 타이머를 해제하고, 다시 보일 때 저장 상태와 경과 시간을 기준으로 즉시 갱신합니다. 포만감이 0이면 화면 변화가 없으므로 타이머를 예약하지 않습니다.
+View가 보이는 동안에는 `nextFullnessDecayAt`에 맞춰 다음 snapshot 전송을 한 번 예약합니다. View가 숨겨지거나 닫히면 타이머를 해제하고, 다시 보일 때 저장 상태와 경과 시간을 기준으로 즉시 갱신합니다. 포만감이 0이면 화면 변화가 없으므로 타이머를 예약하지 않습니다.
 
 ### 전투
 

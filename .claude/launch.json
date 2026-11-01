@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "webview-dev",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev:webview", "--port", "5173", "--strictPort"],
+      "port": 5173
+    }
+  ]
+}

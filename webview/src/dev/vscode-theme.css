@@ -1,0 +1,27 @@
+/* 브라우저 개발 모드에서 VS Code Dark Modern 테마 변수를 흉내 낸다. */
+:root {
+  --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --vscode-foreground: #cccccc;
+  --vscode-descriptionForeground: #9d9d9d;
+  --vscode-sideBar-background: #181818;
+  --vscode-editorWidget-background: #202020;
+  --vscode-widget-border: #313131;
+  --vscode-focusBorder: #0078d4;
+  --vscode-button-background: #0078d4;
+  --vscode-button-foreground: #ffffff;
+  --vscode-button-border: #ffffff12;
+  --vscode-button-hoverBackground: #026ec1;
+  --vscode-button-secondaryBackground: #313131;
+  --vscode-button-secondaryForeground: #cccccc;
+  --vscode-button-secondaryHoverBackground: #3c3c3c;
+  --vscode-testing-iconPassed: #73c991;
+  --vscode-testing-iconFailed: #f14c4c;
+  --vscode-editorWarning-foreground: #cca700;
+  --vscode-font-size: 13px;
+}
+
+/* VS Code가 Webview 문서에 주입하는 기본 body 스타일 */
+body {
+  padding: 0 20px;
+  font-size: var(--vscode-font-size);
+}

@@ -41,21 +41,27 @@
   },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
-    "compile": "tsc -p ./",
+    "compile": "pnpm run compile:extension && pnpm run build:webview",
+    "compile:extension": "tsc -p ./",
+    "build:webview": "tsc -p webview && vite build --config webview/vite.config.mts",
     "watch": "tsc -watch -p ./",
+    "watch:webview": "vite build --watch --config webview/vite.config.mts",
+    "dev:webview": "vite --config webview/vite.config.mts",
     "pretest": "pnpm run compile && pnpm run lint",
-    "lint": "eslint \"src/**/*.ts\" \"media/pet-view/**/*.js\" \"tools/sprite-studio/**/*.mjs\"",
+    "lint": "eslint \"src/**/*.ts\" \"webview/**/*.{ts,tsx,mts}\" \"tools/sprite-studio/**/*.mjs\"",
     "sprite-studio": "node tools/sprite-studio/cli/index.mjs",
     "test:sprite-studio": "node --test tools/sprite-studio/test/*.test.mjs",
+    "test:webview": "vitest run --config webview/vite.config.mts",
     "normalize:pixel-sheet": "node scripts/normalize-pixel-sheet.mjs",
     "validate:pixel-assets": "node scripts/validate-pixel-assets.mjs",
-    "format": "prettier --write \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
-    "format:check": "prettier --check \"src/**/*.ts\" \"media/pet-view/**/*.{html,css,js}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
+    "format": "prettier --write \"src/**/*.ts\" \"webview/**/*.{html,css,ts,tsx,mts,json}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"webview/**/*.{html,css,ts,tsx,mts,json}\" \"media/pixel/**/*.json\" \"scripts/**/*.mjs\" \"tools/sprite-studio/**/*.{mjs,json,md}\" \"*.{json,mjs}\"",
     "test": "vscode-test",
     "validate": "pnpm run format && pnpm run compile && pnpm run lint",
-    "verify": "pnpm run format:check && pnpm run validate:pixel-assets && pnpm run test:sprite-studio && pnpm run test"
+    "verify": "pnpm run format:check && pnpm run validate:pixel-assets && pnpm run test:sprite-studio && pnpm run test:webview && pnpm run test"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
     "@types/mocha": "^10.0.10",
     "@types/node": "24.x",
     "@types/pngjs": "^6.0.5",
@@ -65,9 +71,12 @@
     "@vscode/test-electron": "^3.0.0",
     "eslint": "^10.5.0",
     "pngjs": "^7.0.0",
+    "preact": "^11.1.1",
     "prettier": "^3.9.9",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.1"
+    "typescript-eslint": "^8.61.1",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
   },
   "overrides": {
     "diff": "^8.0.4",

@@ -20,4 +20,6 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - blink, eat, happy, hungry 돌봄 스프라이트 프로토타입, 고정 팔레트 정규화 도구, 포만감·먹이주기 재생 연동
 - attack, hit, faint, victory 전투 스프라이트 프로토타입과 전투 행동 재생 연동
 - 정수 좌표 기반 픽셀 HP 게이지, 데미지 숫자, 타격 흔들림
+- Webview를 Vite + Preact + TypeScript 앱(`webview/`)으로 분리하고 snapshot 메시지 방식으로 전환
+- Extension과 Webview가 공유하는 메시지 타입, 브라우저 mock 개발 모드, Vitest 기반 Webview 테스트
 - Sprite Studio 코어와 AI agent용 CLI (`create`, `apply`, `inspect`, `validate`, `export`), 샘플 프로젝트 `kirby`, `starbud`

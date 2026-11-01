@@ -27,6 +27,8 @@
 - 이미지 생성 없이 정수 좌표로 계산하는 픽셀 HP 게이지, 데미지 숫자, 타격 흔들림
 - Sprite Studio 코어와 AI agent용 CLI: 행 문자열 기반 편집 원본, 이름 있는 팔레트, JSON 편집 명령, 픽셀 diff, PNG·manifest·8배 미리보기 내보내기
 - Sprite Studio 샘플 프로젝트 `kirby`, `starbud`
+- Webview를 `webview/`의 Vite + Preact + TypeScript 앱으로 분리하고 HTML 전체 교체를 snapshot 메시지 방식으로 전환
+- Extension과 Webview가 공유하는 메시지 타입(`src/shared/protocol.ts`)과 브라우저 mock 개발 모드
 
 ### 시간에 따른 포만감 감소
 
@@ -57,13 +59,14 @@
 - 픽셀 스프라이트 생성 전략 재정비: 전략 확정 전 신규 생성 보류, 기준 캐릭터 시트, 참조 이미지 기반 파생, 프레임 정렬, 팔레트 고정, 수동 픽셀 클린업 절차 확정
 - Sprite Studio로 실제 `물짱이` 스프라이트를 제작해 현재 `coralfin` 프로토타입 에셋 교체
 - Sprite Studio 확장: 이름 있는 영역, 애니메이션 미리보기, 사람용 GUI, `media/pixel/` 런타임 에셋으로 내보내기 연결
-- Webview HTML 전체 교체를 snapshot 메시지 방식으로 전환
 - 펫 경험치에 따른 레벨과 전투 스탯 성장 규칙
 - 추가 스테이지와 다른 적 설정
 - 패배·무승부·재시작·Webview 재연결 흐름 테스트
 - 상태에 따른 펫 이미지 또는 애니메이션 변화
 - 상태 초기화 기능을 사용자 인터페이스에 연결
 - 저장소, 서비스, Webview 메시지 흐름 테스트 보강
+- Webview 컴포넌트 렌더링 테스트 (현재는 순수 모듈만 Vitest로 검사)
+- 홈 화면 콘텐츠가 144×216 논리 화면보다 약 11px 길어 하단 버튼이 잘리는 문제 수정
 
 ### 기능 확장
 

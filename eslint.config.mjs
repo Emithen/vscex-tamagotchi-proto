@@ -44,26 +44,30 @@ export default [
   },
 
   {
-    files: ['media/pet-view/**/*.js'],
+    files: ['webview/**/*.{ts,tsx,mts}'],
+
+    plugins: {
+      '@typescript-eslint': typescriptEslint.plugin,
+    },
 
     languageOptions: {
+      parser: typescriptEslint.parser,
       ecmaVersion: 2022,
-      sourceType: 'script',
-      globals: {
-        acquireVsCodeApi: 'readonly',
-        document: 'readonly',
-        HTMLCanvasElement: 'readonly',
-        HTMLElement: 'readonly',
-        HTMLProgressElement: 'readonly',
-        setTimeout: 'readonly',
-        window: 'readonly',
-      },
+      sourceType: 'module',
     },
 
     rules: {
       ...commonRules,
-      'no-undef': 'error',
-      'no-unused-vars': 'error',
+
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   {
