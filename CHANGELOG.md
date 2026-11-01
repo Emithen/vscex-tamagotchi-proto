@@ -23,3 +23,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Webview를 Vite + Preact + TypeScript 앱(`webview/`)으로 분리하고 snapshot 메시지 방식으로 전환
 - Extension과 Webview가 공유하는 메시지 타입, 브라우저 mock 개발 모드, Vitest 기반 Webview 테스트
 - Sprite Studio 코어와 AI agent용 CLI (`create`, `apply`, `inspect`, `validate`, `export`), 샘플 프로젝트 `kirby`, `starbud`
+- 홈 화면 포만감 막대의 줄 상자 때문에 하단 버튼이 11px 잘리던 문제 수정

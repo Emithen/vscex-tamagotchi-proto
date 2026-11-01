@@ -140,6 +140,8 @@ h2 {
 }
 
 progress {
+  /* inline이면 body 글꼴 크기의 줄 상자가 생겨 논리 화면 높이를 넘긴다. */
+  display: block;
   width: 100%;
   height: var(--pixel-unit);
   border: 0;
