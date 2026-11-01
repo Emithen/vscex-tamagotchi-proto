@@ -92,6 +92,7 @@ Webview App
 - [x] 크기, 팔레트, 반투명 픽셀 자동 검사
 - [x] 에셋 문제를 한국어 오류로 보고
 - [x] attack, hit, faint, victory 프로토타입 스프라이트 시트
+- [x] Sprite Studio 코어와 AI agent용 CLI (`tools/sprite-studio/`)
 - [ ] 픽셀 스프라이트 생성·파생·클린업 전략 재정비
 
 ### 3. 홈과 돌봄

@@ -15,7 +15,8 @@ VS Code 사이드바에서 돌보는 작은 다마고치 확장 프로그램 프
 - 전투 진행과 HP를 실시간으로 재생하고 승리 경험치 지급
 - 전투 상태 저장과 보상 중복 수령 방지
 - 144×216 논리 화면과 정수 배율의 Pixel Perfect UI
-- 32×32 픽셀 펫 idle 애니메이션과 에셋 자동 검사
+- 32×32 픽셀 펫 돌봄·전투 애니메이션과 에셋 자동 검사
+- 사람과 AI agent가 함께 쓰는 픽셀 스프라이트 제작 도구 [Sprite Studio](tools/sprite-studio/README.md)
 
 기본 펫의 이름은 `물짱이`이고 초기 포만감은 5입니다.
 
@@ -36,6 +37,7 @@ VS Code에서 이 저장소를 연 뒤 `F5`를 누르면 Extension Development H
 - [전투 밸런싱](docs/balance.md)
 - [Pixel Perfect 시스템](docs/pixel-perfect.md)
 - [개발 가이드](docs/development.md)
+- [Sprite Studio](tools/sprite-studio/README.md)
 
 ## 상태
 

@@ -45,6 +45,20 @@ pnpm run test          # VS Code 테스트 실행
 pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 ```
 
+### Sprite Studio
+
+`tools/sprite-studio/`는 편집 원본(`project.json`)을 구조화된 JSON 명령으로 수정하고 런타임용 PNG, manifest, 8배 미리보기 PNG를 내보내는 도구입니다. 사람용 GUI와 AI agent용 CLI가 같은 `core` 명령을 공유하는 것을 목표로 하며, 현재는 CLI만 제공합니다.
+
+```sh
+pnpm sprite-studio create <project.json> --id <id> [--width 32] [--height 32] # 새 프로젝트 생성
+pnpm sprite-studio apply <project.json> <operations.json|-> # 편집 명령 적용과 diff 출력
+pnpm sprite-studio inspect <project.json>            # 프로젝트 요약
+pnpm sprite-studio validate <project.json>           # 프로젝트 검증
+pnpm sprite-studio export <project.json> <output-directory> # PNG·manifest·미리보기 내보내기
+```
+
+반복 가능한 제작 명령은 프로젝트별 `operations.json`에 보관하고, CLI가 다시 생성하는 `project.json`과 `output/`은 포맷 검사에서 제외합니다. 지원 명령과 편집 원본 형식은 [Sprite Studio 문서](../tools/sprite-studio/README.md)를 참고하세요.
+
 `pnpm run test`는 필요한 VS Code 테스트 바이너리를 `.vscode-test/`에 내려받을 수 있습니다. 이 디렉터리는 Git에서 제외됩니다.
 
 ## 테스트 구성
@@ -65,6 +79,8 @@ pnpm run verify        # 포맷, 컴파일, 린트, 테스트 전체 검증
 - 데미지, 공격 주기, 승패, 행동 수 상한 계산
 - 전투 생성, 종료 전 보상 거부, 보상 중복 방지
 - 전투 상태 저장, 삭제, 스키마 검증
+
+Sprite Studio 코어 테스트는 `tools/sprite-studio/test/`에 있으며 `pnpm run test:sprite-studio`로 편집 명령, 픽셀 diff, 도형 채우기, 팔레트 검증을 검사합니다.
 
 상태 규칙을 변경할 때는 해당 테스트를 먼저 갱신하고 `pnpm run verify`로 전체 검증합니다.
 

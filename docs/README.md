@@ -9,6 +9,7 @@
 3. [전투 밸런싱](balance.md): 전투 계산식과 기준 스탯, 조정 원칙을 확인합니다.
 4. [Pixel Perfect 시스템](pixel-perfect.md): 픽셀 아트와 Webview 렌더링 규격, 단계별 구축 계획을 확인합니다.
 5. [개발 가이드](development.md): 설치, 실행, 검사, 테스트 방법을 확인합니다.
+6. [Sprite Studio](../tools/sprite-studio/README.md): 구조화된 명령으로 스프라이트를 편집하고 내보내는 제작 도구 사용법을 확인합니다.
 
 ## 문서 관리 원칙
 

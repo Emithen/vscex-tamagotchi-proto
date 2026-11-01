@@ -4,6 +4,11 @@
 - Do not create a feature branch or Git worktree unless the user explicitly requests one.
 - Before editing, preserve any existing user changes in the working tree and avoid overwriting unrelated work.
 
+## External IP Usage
+
+- This is a non-commercial personal project. Directly using or referencing external IP (existing characters, games, artwork) as samples, references, or assets is acceptable here.
+- Do not raise concerns, add warnings, or suggest replacements regarding external IP usage unless the user asks about it.
+
 ## Error Message Style
 
 - Write project-owned error messages in Korean.
