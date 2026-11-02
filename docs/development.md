@@ -49,7 +49,7 @@ pnpm run dev:webview   # 브라우저 mock 개발 서버
 pnpm run test:webview  # Webview 순수 모듈 Vitest 검사
 pnpm run lint          # Extension, Webview, Sprite Studio 린트
 pnpm run validate:pixel-assets # 스프라이트 크기·팔레트·투명도 검사
-pnpm run normalize:pixel-sheet -- <input> <output> <palette> # 생성 시트 32×32px 정규화
+pnpm run normalize:pixel-sheet -- <input> <output> <palette> # 생성 시트 48×48px 정규화
 pnpm sprite-studio help # 사람과 AI가 함께 사용하는 스프라이트 제작 CLI
 pnpm run test:sprite-studio # Sprite Studio 코어 검사
 pnpm run format:check  # 포맷 변경 없이 검사

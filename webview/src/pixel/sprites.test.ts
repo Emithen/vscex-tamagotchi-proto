@@ -4,20 +4,20 @@ import { createSpriteLibrary, type SpriteManifest } from './sprites';
 const createManifest = (id: string, animation: string): SpriteManifest => ({
   id,
   image: `../sprites/${id}.png`,
-  frame: { width: 32, height: 32, columns: 4, rows: 1 },
+  frame: { width: 48, height: 48, columns: 4, rows: 1 },
   animations: { [animation]: { frames: [0, 1, 2, 3], fps: 8, loop: false } },
 });
 
 describe('createSpriteLibrary', () => {
   it('스프라이트 세트의 manifest로 재생 정보를 만든다', () => {
-    const library = createSpriteLibrary('https://example.test/sprites/', 'coralfin', [
-      createManifest('coralfin-attack', 'attack'),
+    const library = createSpriteLibrary('https://example.test/sprites/', 'mudkip', [
+      createManifest('mudkip-attack', 'attack'),
     ]);
 
     expect(library.get('attack')).toEqual({
-      src: 'https://example.test/sprites/coralfin-attack.png',
-      frameWidth: 32,
-      frameHeight: 32,
+      src: 'https://example.test/sprites/mudkip-attack.png',
+      frameWidth: 48,
+      frameHeight: 48,
       frameCount: 4,
       frames: [0, 1, 2, 3],
       fps: 8,
@@ -26,7 +26,7 @@ describe('createSpriteLibrary', () => {
   });
 
   it('다른 스프라이트 세트의 애니메이션은 사용하지 않는다', () => {
-    const library = createSpriteLibrary('/sprites', 'coralfin', [
+    const library = createSpriteLibrary('/sprites', 'mudkip', [
       createManifest('other-attack', 'attack'),
     ]);
 

@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "id": "coralfin-eat",
-  "image": "../sprites/coralfin-eat.png",
+  "id": "mudkip-eat",
+  "image": "../sprites/mudkip-eat.png",
   "frame": {
-    "width": 32,
-    "height": 32,
-    "columns": 4,
+    "width": 48,
+    "height": 48,
+    "columns": 3,
     "rows": 1
   },
   "palette": {
@@ -14,7 +14,7 @@
   },
   "animations": {
     "eat": {
-      "frames": [0, 1, 2, 3],
+      "frames": [0, 1, 0, 1, 2],
       "fps": 6,
       "loop": false
     }

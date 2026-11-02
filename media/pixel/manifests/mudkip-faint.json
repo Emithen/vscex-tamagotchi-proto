@@ -1,10 +1,10 @@
 {
   "version": 1,
-  "id": "coralfin-happy",
-  "image": "../sprites/coralfin-happy.png",
+  "id": "mudkip-faint",
+  "image": "../sprites/mudkip-faint.png",
   "frame": {
-    "width": 32,
-    "height": 32,
+    "width": 48,
+    "height": 48,
     "columns": 4,
     "rows": 1
   },
@@ -13,10 +13,10 @@
     "binaryAlpha": true
   },
   "animations": {
-    "happy": {
+    "faint": {
       "frames": [0, 1, 2, 3],
-      "fps": 4,
-      "loop": true
+      "fps": 6,
+      "loop": false
     }
   }
 }

@@ -26,7 +26,7 @@ export type SpriteLibrary = {
 };
 
 /** 현재 펫이 사용하는 스프라이트 manifest ID 접두사 */
-export const PET_SPRITE_SET = 'coralfin';
+export const PET_SPRITE_SET = 'mudkip';
 
 const bundledManifests = import.meta.glob<SpriteManifest>('../../../media/pixel/manifests/*.json', {
   eager: true,

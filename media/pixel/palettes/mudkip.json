@@ -1,0 +1,20 @@
+{
+  "id": "mudkip",
+  "maxOpaqueColors": 16,
+  "colors": [
+    "#000000",
+    "#316a94",
+    "#31738b",
+    "#41a4de",
+    "#523929",
+    "#7b8bac",
+    "#7bcdee",
+    "#9cbde6",
+    "#ac5a20",
+    "#b4deee",
+    "#c5def6",
+    "#ee8331",
+    "#ffac41",
+    "#ffffff"
+  ]
+}

@@ -3,8 +3,8 @@ import path from 'node:path';
 import { PNG } from 'pngjs';
 
 const FRAME_COUNT = 4;
-const FRAME_SIZE = 32;
-const CONTENT_SIZE = 30;
+const FRAME_SIZE = 48;
+const CONTENT_SIZE = 46;
 const ALPHA_THRESHOLD = 128;
 
 try {

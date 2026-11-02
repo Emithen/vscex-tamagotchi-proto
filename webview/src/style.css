@@ -202,8 +202,8 @@ progress {
 }
 
 .stage-enemy-image {
-  width: 64px;
-  height: 64px;
+  width: 48px;
+  height: 48px;
   margin: 0 auto;
 }
 
@@ -248,8 +248,8 @@ progress {
 
 .combatant-image {
   --sprite-facing: 1;
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   transform: scaleX(var(--sprite-facing));
 }
 

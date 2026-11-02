@@ -1,11 +1,11 @@
 {
   "version": 1,
-  "id": "coralfin-blink",
-  "image": "../sprites/coralfin-blink.png",
+  "id": "mudkip",
+  "image": "../sprites/mudkip-idle.png",
   "frame": {
-    "width": 32,
-    "height": 32,
-    "columns": 4,
+    "width": 48,
+    "height": 48,
+    "columns": 3,
     "rows": 1
   },
   "palette": {
@@ -13,8 +13,8 @@
     "binaryAlpha": true
   },
   "animations": {
-    "blink": {
-      "frames": [0, 0, 0, 0, 0, 0, 1, 2, 3],
+    "idle": {
+      "frames": [0, 1, 2, 1],
       "fps": 4,
       "loop": true
     }
