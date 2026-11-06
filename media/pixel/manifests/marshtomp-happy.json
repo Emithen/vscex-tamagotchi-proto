@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "marshtomp-happy",
+  "image": "../sprites/marshtomp-happy.png",
+  "frame": {
+    "width": 64,
+    "height": 64,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "happy": {
+      "frames": [0, 0, 1, 2, 1, 3],
+      "fps": 6,
+      "loop": true
+    }
+  }
+}

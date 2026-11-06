@@ -166,13 +166,19 @@ function CombatantPanel({
   return (
     <section class={`combatant combatant--${side}`}>
       <span class="combatant-label">{label}</span>
-      <PixelSprite
-        className={view.isHit ? 'combatant-image is-hit' : 'combatant-image'}
-        animation={sprites.get(view.animation)}
-        playKey={view.playKey}
-        label={`${label} ${combatant.name}`}
-        onComplete={onAnimationComplete}
-      />
+      <div class="combatant-stage">
+        <PixelSprite
+          className={
+            view.isHit
+              ? `combatant-image combatant-image--${combatant.id} is-hit`
+              : `combatant-image combatant-image--${combatant.id}`
+          }
+          animation={sprites.get(view.animation, combatant.id)}
+          playKey={view.playKey}
+          label={`${label} ${combatant.name}`}
+          onComplete={onAnimationComplete}
+        />
+      </div>
       <strong>{combatant.name}</strong>
       <div
         class={hpClass}

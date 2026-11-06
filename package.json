@@ -17,6 +17,16 @@
         "command": "tamagotchi.setFullness",
         "title": "포만감 설정",
         "category": "Tamagotchi (개발)"
+      },
+      {
+        "command": "tamagotchi.resetPet",
+        "title": "펫 상태 초기화 (물짱이로 되돌리기)",
+        "category": "Tamagotchi (개발)"
+      },
+      {
+        "command": "tamagotchi.applyScenario",
+        "title": "시나리오 상태 주입",
+        "category": "Tamagotchi (개발)"
       }
     ],
     "viewsContainers": {

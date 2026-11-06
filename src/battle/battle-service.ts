@@ -1,8 +1,9 @@
 import { randomUUID } from 'node:crypto';
+import type { GameData } from '../data/types';
 import { PetService } from '../pet/pet-service';
 import {
   GRASSLAND_STAGE_ID,
-  MUDKIP_COMBATANT,
+  createPetCombatant,
   getBattleStage,
   simulateBattle,
   type BattleRecord,
@@ -17,6 +18,7 @@ export class BattleService {
     private readonly petService: PetService,
     private readonly now: () => number = Date.now,
     private readonly createId: () => string = randomUUID,
+    public readonly gameData: GameData = petService.gameData,
   ) {}
 
   getBattle(): BattleRecord | undefined {
@@ -31,14 +33,16 @@ export class BattleService {
       return currentBattle;
     }
 
-    const stage = getBattleStage(stageId);
-    const simulation = simulateBattle(MUDKIP_COMBATANT, stage.enemy);
+    const stage = getBattleStage(stageId, this.gameData);
+    const petState = await this.petService.getState();
+    const petCombatant = createPetCombatant(petState, this.gameData);
+    const simulation = simulateBattle(petCombatant, stage.enemy, this.gameData);
     const battle: BattleRecord = {
       ...simulation,
       id: this.createId(),
       stageId: stage.id,
       startedAt: this.now(),
-      pet: MUDKIP_COMBATANT,
+      pet: petCombatant,
       enemy: stage.enemy,
       experienceReward: simulation.result === 'victory' ? stage.victoryExperience : 0,
       rewardClaimed: false,

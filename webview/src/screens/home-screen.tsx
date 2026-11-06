@@ -1,4 +1,10 @@
-import { MAX_FULLNESS, clampFullness, type PetState } from '@extension/pet/pet-state';
+import { GAME_DATA } from '@extension/data/game-data';
+import {
+  MAX_FULLNESS,
+  clampFullness,
+  getEvolutionExperience,
+  type PetState,
+} from '@extension/pet/pet-state';
 import { useState } from 'preact/hooks';
 import { PixelSprite } from '../components/pixel-sprite';
 import { useSprites } from '../pixel/sprites';
@@ -13,12 +19,13 @@ export function HomeScreen({ pet, onFeed, onOpenStage }: HomeScreenProps) {
   const sprites = useSprites();
   const [isEating, setIsEating] = useState(false);
   const fullness = clampFullness(pet.fullness);
+  const evolutionExperience = getEvolutionExperience(pet.speciesId);
   const restingAnimation =
-    fullness <= 2
-      ? sprites.get('hungry')
-      : fullness >= 9
-        ? sprites.get('happy')
-        : sprites.get('blink');
+    fullness <= GAME_DATA.care.hungryThreshold
+      ? sprites.get('hungry', pet.speciesId)
+      : fullness >= GAME_DATA.care.happyThreshold
+        ? sprites.get('happy', pet.speciesId)
+        : sprites.get('blink', pet.speciesId);
 
   const finishEating = () => {
     setIsEating(false);
@@ -27,14 +34,26 @@ export function HomeScreen({ pet, onFeed, onOpenStage }: HomeScreenProps) {
 
   return (
     <main class="screen home-screen">
-      <PixelSprite
-        className="pet-image"
-        animation={isEating ? sprites.get('eat') : restingAnimation}
-        label={pet.name}
-        onComplete={isEating ? finishEating : undefined}
-      />
+      <div class="pet-stage">
+        <PixelSprite
+          className="pet-image"
+          animation={isEating ? sprites.get('eat', pet.speciesId) : restingAnimation}
+          label={pet.name}
+          onComplete={isEating ? finishEating : undefined}
+        />
+      </div>
       <h2>{pet.name}</h2>
-      <p class="experience">경험치 {pet.experience}</p>
+      <p class="experience">
+        {evolutionExperience === undefined
+          ? '진화: MAX'
+          : `진화: ${pet.experience} / ${evolutionExperience}`}
+      </p>
+      <progress
+        class="experience-progress"
+        aria-label="진화 경험치"
+        max={evolutionExperience ?? 1}
+        value={evolutionExperience === undefined ? 1 : pet.experience}
+      />
       <p class="fullness">
         포만감: {fullness} / {MAX_FULLNESS}
       </p>

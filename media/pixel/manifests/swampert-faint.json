@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "swampert-faint",
+  "image": "../sprites/swampert-faint.png",
+  "frame": {
+    "width": 80,
+    "height": 80,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "faint": {
+      "frames": [0, 1, 2, 3],
+      "fps": 6,
+      "loop": false
+    }
+  }
+}

@@ -50,6 +50,7 @@ suite('Pet State Store', () => {
     const state = await store.load();
     const after = Date.now();
 
+    assert.strictEqual(state.speciesId, 'mudkip');
     assert.strictEqual(state.name, '물짱이');
     assert.strictEqual(state.fullness, DEFAULT_FULLNESS);
     assert.strictEqual(state.experience, 0);

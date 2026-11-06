@@ -22,22 +22,36 @@ TamagotchiViewProvider ──────────┘
 
 `src/extension.ts`는 확장 활성화 시 저장소, 서비스, Webview Provider를 조립합니다. `tamagotchi.setFullness` 개발 명령도 이곳에서 등록합니다.
 
+### 게임 데이터셋과 시나리오 (`src/data/`)
+
+게임 규칙과 도감·스테이지 설정은 코드 로직과 분리해 `src/data/` 아래의 TypeScript 모듈로 관리합니다.
+
+- `src/data/types.ts`: 최상위 `GameData` 스키마(`care`, `species`, `battle`, `stages`) 타입 정의
+- `src/data/species.ts`: 포켓몬 종별(`mudkip`, `marshtomp`, `swampert`) 이름, 전투 스탯, 진화 요구 경험치 카탈로그
+- `src/data/stages.ts`: 전투 스테이지(`grassland-1`) 카탈로그
+- `src/data/game-data.ts`: 개발·테스트용 데이터셋(`DEV_TEST_GAME_DATA`, 진화 요구 경험치 `10 → 20`)과 프로덕션 데이터셋(`PRODUCTION_GAME_DATA`, 진화 요구 경험치 `50 → 100`) 조립
+- `src/data/scenarios.ts`: 브라우저 프리뷰와 테스트에서 즉시 주입할 수 있는 상태 시나리오 프리셋(`GAME_SCENARIOS`)
+
+`src/extension.ts`는 `context.extensionMode`에 따라 프로덕션과 개발·테스트 데이터셋을 선택해 서비스에 주입하며, 순수 상태·전투 함수는 인자로 전달된 `GameData`를 기준으로 동작합니다.
+
 ### 상태 모델
 
 `src/pet/pet-state.ts`는 `PetState` 타입과 순수 상태 변경 함수를 제공합니다.
 
 ```ts
 type PetState = {
+  speciesId: 'mudkip' | 'marshtomp' | 'swampert';
   name: string;
   fullness: number;
+  experience: number;
+  lastRewardedBattleId?: string;
   nextFullnessDecayAt: number;
 };
 ```
 
-- 초기 이름: `물짱이`
-- 초기 포만감: `5`
-- 허용 범위: `0~10`
-- 먹이 주기: 포만감 1 증가, 최대 10 유지
+- 초기 종: `mudkip` (`물짱이`)
+- 초기 포만감: `5` (허용 범위 `0~10`, 먹이 주기 시 1 증가)
+- 진화 경험치: 별도 레벨 없이 단계별 요구 경험치(`mudkip → marshtomp: 10`, `marshtomp → swampert: 20`)를 채우면 즉시 자동 진화하며, 최종 단계(`swampert`)에서는 `MAX` 상태로 고정
 - `nextFullnessDecayAt`: 다음 포만감 감소 예정 시각
 
 상태 함수는 기존 객체를 변경하지 않고 새로운 객체를 반환합니다.

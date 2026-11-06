@@ -1,4 +1,7 @@
+import { GAME_DATA } from '../data/game-data';
+import type { GameData } from '../data/types';
 import {
+  addPetExperience,
   applyFullnessDecay,
   createInitialPetState,
   setFullness,
@@ -13,11 +16,12 @@ export class PetService {
   constructor(
     private readonly store: PetStateStorage,
     private readonly now: () => number = Date.now,
+    public readonly gameData: GameData = GAME_DATA,
   ) {}
 
   async getState(): Promise<PetState> {
     const storedState = await this.store.load();
-    const currentState = applyFullnessDecay(storedState, this.now());
+    const currentState = applyFullnessDecay(storedState, this.now(), this.gameData);
 
     if (currentState !== storedState) {
       await this.store.save(currentState);
@@ -34,8 +38,8 @@ export class PetService {
   async feed(): Promise<PetState> {
     const now = this.now();
     const storedState = await this.store.load();
-    const currentState = applyFullnessDecay(storedState, now);
-    const nextState = feedPet(currentState, now);
+    const currentState = applyFullnessDecay(storedState, now, this.gameData);
+    const nextState = feedPet(currentState, now, this.gameData);
 
     if (nextState !== storedState) {
       await this.store.save(nextState);
@@ -46,7 +50,7 @@ export class PetService {
 
   async setFullness(fullness: number): Promise<PetState> {
     const currentState = await this.store.load();
-    const nextState = setFullness(currentState, fullness, this.now());
+    const nextState = setFullness(currentState, fullness, this.now(), this.gameData);
 
     await this.store.save(nextState);
 
@@ -66,9 +70,9 @@ export class PetService {
       );
     }
 
-    const nextState = {
-      ...currentState,
-      experience: currentState.experience + amount,
+    const evolvedState = addPetExperience(currentState, amount, this.gameData);
+    const nextState: PetState = {
+      ...evolvedState,
       lastRewardedBattleId: battleId,
     };
 
@@ -77,10 +81,15 @@ export class PetService {
   }
 
   async reset(): Promise<PetState> {
-    const initialState = createInitialPetState(this.now());
+    const initialState = createInitialPetState(this.now(), this.gameData);
 
     await this.store.save(initialState);
 
     return initialState;
+  }
+
+  async replaceState(nextState: PetState): Promise<PetState> {
+    await this.store.save(nextState);
+    return nextState;
   }
 }

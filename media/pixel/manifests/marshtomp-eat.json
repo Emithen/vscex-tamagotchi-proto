@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "marshtomp-eat",
+  "image": "../sprites/marshtomp-eat.png",
+  "frame": {
+    "width": 64,
+    "height": 64,
+    "columns": 3,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "eat": {
+      "frames": [0, 1, 0, 1, 2],
+      "fps": 6,
+      "loop": false
+    }
+  }
+}

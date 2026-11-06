@@ -1,10 +1,17 @@
 import * as assert from 'node:assert/strict';
 import {
   DEFAULT_FULLNESS,
+  DEFAULT_SPECIES_ID,
   FULLNESS_DECAY_INTERVAL_MS,
+  MARSHTOMP_EVOLUTION_EXPERIENCE,
   MAX_FULLNESS,
+  MUDKIP_EVOLUTION_EXPERIENCE,
+  addPetExperience,
   applyFullnessDecay,
+  canEvolvePet,
   createInitialPetState,
+  evolvePet,
+  getEvolutionExperience,
   getFullnessDecayDelay,
   setFullness,
   feedPet,
@@ -13,6 +20,7 @@ import {
 
 function createState(overrides: Partial<PetState> = {}): PetState {
   return {
+    speciesId: DEFAULT_SPECIES_ID,
     name: '물짱이',
     fullness: DEFAULT_FULLNESS,
     experience: 0,
@@ -25,6 +33,7 @@ suite('Pet State', () => {
   test('초기 상태를 생성한다', () => {
     const state = createInitialPetState(1_000);
 
+    assert.strictEqual(state.speciesId, 'mudkip');
     assert.strictEqual(state.name, '물짱이');
     assert.strictEqual(state.fullness, DEFAULT_FULLNESS);
     assert.strictEqual(state.experience, 0);
@@ -175,5 +184,42 @@ suite('Pet State', () => {
 
     assert.deepStrictEqual(state, originalState);
     assert.notStrictEqual(nextState, state);
+  });
+
+  test('진화 단계별 요구 경험치를 반환한다', () => {
+    assert.strictEqual(getEvolutionExperience('mudkip'), MUDKIP_EVOLUTION_EXPERIENCE);
+    assert.strictEqual(getEvolutionExperience('marshtomp'), MARSHTOMP_EVOLUTION_EXPERIENCE);
+    assert.strictEqual(getEvolutionExperience('swampert'), undefined);
+  });
+
+  test('물짱이가 요구 경험치 10을 채우면 늪짱이로 자동 진화한다', () => {
+    const state = createState({ speciesId: 'mudkip', name: '물짱이', experience: 0 });
+
+    const evolved = addPetExperience(state, 10);
+
+    assert.strictEqual(evolved.speciesId, 'marshtomp');
+    assert.strictEqual(evolved.name, '늪짱이');
+    assert.strictEqual(evolved.experience, 0);
+  });
+
+  test('늪짱이가 요구 경험치 20을 채우면 대짱이로 자동 진화하고 MAX 고정된다', () => {
+    const state = createState({ speciesId: 'marshtomp', name: '늪짱이', experience: 10 });
+
+    const evolved = addPetExperience(state, 10);
+
+    assert.strictEqual(evolved.speciesId, 'swampert');
+    assert.strictEqual(evolved.name, '대짱이');
+    assert.strictEqual(evolved.experience, 0);
+    assert.strictEqual(canEvolvePet(evolved), false);
+    assert.strictEqual(addPetExperience(evolved, 10), evolved);
+  });
+
+  test('별명을 사용 중이면 진화해도 이름을 유지한다', () => {
+    const state = createState({ speciesId: 'mudkip', name: '내물짱', experience: 10 });
+
+    const evolved = evolvePet(state);
+
+    assert.strictEqual(evolved.speciesId, 'marshtomp');
+    assert.strictEqual(evolved.name, '내물짱');
   });
 });

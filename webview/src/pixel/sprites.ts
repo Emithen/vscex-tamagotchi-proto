@@ -22,10 +22,10 @@ export type PetAnimationName =
   'idle' | 'blink' | 'eat' | 'happy' | 'hungry' | 'attack' | 'hit' | 'faint' | 'victory';
 
 export type SpriteLibrary = {
-  get(name: PetAnimationName): SpriteAnimation;
+  get(name: PetAnimationName, spriteSet?: string): SpriteAnimation;
 };
 
-/** 현재 펫이 사용하는 스프라이트 manifest ID 접두사 */
+/** 기본 펫이 사용하는 스프라이트 manifest ID 접두사 */
 export const PET_SPRITE_SET = 'mudkip';
 
 const bundledManifests = import.meta.glob<SpriteManifest>('../../../media/pixel/manifests/*.json', {
@@ -39,19 +39,17 @@ const bundledManifests = import.meta.glob<SpriteManifest>('../../../media/pixel/
  */
 export function createSpriteLibrary(
   spriteBaseUri: string,
-  spriteSet = PET_SPRITE_SET,
+  defaultSpriteSet = PET_SPRITE_SET,
   manifests: SpriteManifest[] = Object.values(bundledManifests),
 ): SpriteLibrary {
   const animations = new Map<string, SpriteAnimation>();
   const baseUri = spriteBaseUri.replace(/\/$/, '');
 
   for (const manifest of manifests) {
-    if (manifest.id !== spriteSet && !manifest.id.startsWith(`${spriteSet}-`)) {
-      continue;
-    }
+    const setPrefix = manifest.id.split('-')[0];
     const fileName = manifest.image.split('/').at(-1);
     for (const [name, animation] of Object.entries(manifest.animations)) {
-      animations.set(name, {
+      animations.set(`${setPrefix}:${name}`, {
         src: `${baseUri}/${fileName}`,
         frameWidth: manifest.frame.width,
         frameHeight: manifest.frame.height,
@@ -64,8 +62,8 @@ export function createSpriteLibrary(
   }
 
   return {
-    get(name) {
-      const animation = animations.get(name);
+    get(name, spriteSet = defaultSpriteSet) {
+      const animation = animations.get(`${spriteSet}:${name}`);
       if (!animation) {
         throw new Error(
           `Tamagotchi 스프라이트 조회 실패: 스프라이트 세트 "${spriteSet}"에서 애니메이션 "${name}"을 찾지 못했습니다. "media/pixel/manifests"의 manifest ID와 "animations" 키를 확인하세요.`,

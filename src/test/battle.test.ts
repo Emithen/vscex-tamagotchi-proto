@@ -2,9 +2,12 @@ import * as assert from 'node:assert/strict';
 import {
   BASE_ATTACK_INTERVAL_MS,
   GRASSLAND_STAGE,
+  MARSHTOMP_COMBATANT,
   MAX_BATTLE_ACTIONS,
   MUDKIP_COMBATANT,
+  SWAMPERT_COMBATANT,
   calculateDamage,
+  createPetCombatant,
   getBattleStage,
   getAttackIntervalMs,
   simulateBattle,
@@ -52,5 +55,22 @@ suite('Battle', () => {
 
     assert.strictEqual(battle.result, 'draw');
     assert.strictEqual(battle.actions.length, MAX_BATTLE_ACTIONS);
+  });
+
+  test('진화 단계별 스탯으로 전투원을 생성하고 더 빠르게 승리한다', () => {
+    const marshtomp = createPetCombatant({ speciesId: 'marshtomp', name: '늪짱이' });
+    const swampert = createPetCombatant({ speciesId: 'swampert', name: '대짱이' });
+
+    assert.deepStrictEqual(marshtomp.stats, MARSHTOMP_COMBATANT.stats);
+    assert.deepStrictEqual(swampert.stats, SWAMPERT_COMBATANT.stats);
+
+    const marshtompBattle = simulateBattle(marshtomp, MUDKIP_COMBATANT);
+    const swampertBattle = simulateBattle(swampert, MUDKIP_COMBATANT);
+
+    assert.strictEqual(marshtompBattle.result, 'victory');
+    assert.ok(marshtompBattle.durationMs < 9_000);
+    assert.strictEqual(swampertBattle.result, 'victory');
+    assert.strictEqual(swampertBattle.actions.length, 1);
+    assert.strictEqual(swampertBattle.durationMs, 2_500);
   });
 });

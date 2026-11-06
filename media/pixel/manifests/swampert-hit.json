@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "swampert-hit",
+  "image": "../sprites/swampert-hit.png",
+  "frame": {
+    "width": 80,
+    "height": 80,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "hit": {
+      "frames": [0, 1, 2, 3],
+      "fps": 8,
+      "loop": false
+    }
+  }
+}

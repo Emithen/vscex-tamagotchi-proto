@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "swampert-victory",
+  "image": "../sprites/swampert-victory.png",
+  "frame": {
+    "width": 80,
+    "height": 80,
+    "columns": 3,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "victory": {
+      "frames": [0, 1, 0, 2],
+      "fps": 5,
+      "loop": true
+    }
+  }
+}

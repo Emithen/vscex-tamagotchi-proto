@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "marshtomp-victory",
+  "image": "../sprites/marshtomp-victory.png",
+  "frame": {
+    "width": 64,
+    "height": 64,
+    "columns": 3,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "victory": {
+      "frames": [0, 1, 0, 2],
+      "fps": 5,
+      "loop": true
+    }
+  }
+}

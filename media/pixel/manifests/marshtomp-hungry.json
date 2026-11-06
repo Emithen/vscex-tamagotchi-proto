@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "marshtomp-hungry",
+  "image": "../sprites/marshtomp-hungry.png",
+  "frame": {
+    "width": 64,
+    "height": 64,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "hungry": {
+      "frames": [0, 1, 2, 3],
+      "fps": 3,
+      "loop": true
+    }
+  }
+}

@@ -18,7 +18,7 @@ export function StageScreen({ stage, onStartBattle, onBack }: StageScreenProps) 
       <div class="stage-card">
         <PixelSprite
           className="stage-enemy-image"
-          animation={sprites.get('idle')}
+          animation={sprites.get('idle', stage.enemy.id)}
           label={`적 ${stage.enemy.name}`}
         />
         <p class="stage-enemy-name">적: {stage.enemy.name}</p>

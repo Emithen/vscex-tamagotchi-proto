@@ -3,7 +3,13 @@
  */
 
 import * as vscode from 'vscode';
-import { MAX_FULLNESS, MIN_FULLNESS, PetState, createInitialPetState } from './pet-state';
+import {
+  MAX_FULLNESS,
+  MIN_FULLNESS,
+  PetState,
+  createInitialPetState,
+  isPetSpeciesId,
+} from './pet-state';
 
 const PET_STATE_KEY = 'tamagotchi.petState';
 
@@ -37,6 +43,7 @@ function isPetState(value: unknown): value is PetState {
   const state = value as Partial<PetState>;
 
   return (
+    isPetSpeciesId(state.speciesId) &&
     typeof state.name === 'string' &&
     Number.isInteger(state.fullness) &&
     state.fullness !== undefined &&

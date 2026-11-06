@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "marshtomp-hit",
+  "image": "../sprites/marshtomp-hit.png",
+  "frame": {
+    "width": 64,
+    "height": 64,
+    "columns": 4,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "hit": {
+      "frames": [0, 1, 2, 3],
+      "fps": 8,
+      "loop": false
+    }
+  }
+}

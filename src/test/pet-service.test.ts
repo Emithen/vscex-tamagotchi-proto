@@ -19,6 +19,7 @@ class TestPetStateStore {
 
 function createState(overrides: Partial<PetState> = {}): PetState {
   return {
+    speciesId: 'mudkip',
     name: '물짱이',
     fullness: 5,
     experience: 0,
@@ -77,15 +78,18 @@ suite('Pet Service', () => {
     assert.strictEqual(store.saveCount, 0);
   });
 
-  test('전투 경험치를 같은 전투에서 한 번만 지급한다', async () => {
+  test('전투 경험치를 같은 전투에서 한 번만 지급하고 진화 조건 충족 시 진화한다', async () => {
     const store = new TestPetStateStore(createState());
     const service = new PetService(store, () => 0);
 
     const rewardedState = await service.addBattleExperience('battle-1', 10);
     const retriedState = await service.addBattleExperience('battle-1', 10);
 
-    assert.strictEqual(rewardedState.experience, 10);
-    assert.strictEqual(retriedState.experience, 10);
+    assert.strictEqual(rewardedState.speciesId, 'marshtomp');
+    assert.strictEqual(rewardedState.name, '늪짱이');
+    assert.strictEqual(rewardedState.experience, 0);
+    assert.strictEqual(retriedState.speciesId, 'marshtomp');
+    assert.strictEqual(retriedState.experience, 0);
     assert.strictEqual(retriedState.lastRewardedBattleId, 'battle-1');
     assert.strictEqual(store.saveCount, 1);
   });

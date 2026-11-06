@@ -25,3 +25,47 @@ body {
   padding: 0 20px;
   font-size: var(--vscode-font-size);
 }
+
+.dev-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--vscode-widget-border);
+  background: var(--vscode-editorWidget-background);
+  font-size: 12px;
+}
+
+.dev-toolbar-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.dev-toolbar-label {
+  color: var(--vscode-descriptionForeground);
+  font-weight: 600;
+}
+
+.dev-toolbar-button,
+.dev-toolbar-select {
+  padding: 2px 8px;
+  border: 1px solid var(--vscode-widget-border);
+  color: var(--vscode-button-secondaryForeground);
+  background: var(--vscode-button-secondaryBackground);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dev-toolbar-button:hover,
+.dev-toolbar-select:hover {
+  background: var(--vscode-button-secondaryHoverBackground);
+}
+
+.dev-toolbar-button.is-active {
+  border-color: var(--vscode-focusBorder);
+  color: var(--vscode-button-foreground);
+  background: var(--vscode-button-background);
+}

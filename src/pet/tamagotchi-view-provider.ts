@@ -2,13 +2,8 @@ import { randomBytes } from 'node:crypto';
 import * as vscode from 'vscode';
 import type { BattleRecord } from '../battle/battle';
 import { BattleService } from '../battle/battle-service';
-import {
-  BATTLE_RESULT_REVEAL_DELAY_MS,
-  createViewSnapshot,
-  type HostMessage,
-  type WebviewMessageType,
-} from '../shared/protocol';
-import { MIN_FULLNESS, type PetState, getFullnessDecayDelay } from './pet-state';
+import { createViewSnapshot, type HostMessage, type WebviewMessageType } from '../shared/protocol';
+import { type PetState, getFullnessDecayDelay } from './pet-state';
 import { PetService } from './pet-service';
 
 export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
@@ -89,7 +84,7 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
 
     const message: HostMessage = {
       type: 'snapshot',
-      snapshot: createViewSnapshot(petState, battle),
+      snapshot: createViewSnapshot(petState, battle, this.petService.gameData),
     };
     await webviewView.webview.postMessage(message);
     this.scheduleRefresh(webviewView, petState, battle);
@@ -120,12 +115,15 @@ export class TamagotchiViewProvider implements vscode.WebviewViewProvider {
     }
 
     const delays: number[] = [];
-    if (petState.fullness > MIN_FULLNESS) {
+    if (petState.fullness > this.petService.gameData.care.minFullness) {
       delays.push(getFullnessDecayDelay(petState));
     }
     if (battle) {
       const battleDelay =
-        battle.startedAt + battle.durationMs + BATTLE_RESULT_REVEAL_DELAY_MS - Date.now();
+        battle.startedAt +
+        battle.durationMs +
+        this.petService.gameData.battle.resultRevealDelayMs -
+        Date.now();
       if (battleDelay > 0) {
         delays.push(battleDelay);
       }

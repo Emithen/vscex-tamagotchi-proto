@@ -25,7 +25,7 @@ Command Palette에서 `Tamagotchi (개발): 포만감 설정`을 실행하면 �
 pnpm run dev:webview
 ```
 
-VS Code 없이 브라우저에서 Webview 앱을 HMR로 확인합니다. Extension Host 대신 `webview/src/dev/mock-host.ts`가 메모리 상태로 응답하며, `http://localhost:5173/?fullness=2`처럼 초기 포만감을 지정할 수 있습니다. VS Code 테마 변수는 `webview/src/dev/vscode-theme.css`가 Dark Modern 값으로 흉내 냅니다. 최종 확인은 Extension Development Host에서 합니다.
+VS Code 없이 브라우저에서 Webview 앱을 HMR로 확인합니다. Extension Host 대신 `webview/src/dev/mock-host.ts`가 메모리 상태로 응답하며, 상단 개발 툴바 또는 쿼리 파라미터(`?scale=4`, `?scenario=marshtomp-near-evolution`, `?fullness=2`)로 화면 배율(`Auto`, `1×~6×`)과 시나리오 프리셋(`default`, `hungry-mudkip`, `happy-mudkip`, `marshtomp`, `marshtomp-near-evolution`, `swampert-max`)을 즉시 전환할 수 있습니다. VS Code 테마 변수는 `webview/src/dev/vscode-theme.css`가 Dark Modern 값으로 흉내 냅니다. 최종 확인은 Extension Development Host에서 합니다.
 
 ### Pixel Perfect 수동 검수
 
@@ -102,6 +102,7 @@ Sprite Studio 코어 테스트는 `tools/sprite-studio/test/`에 있으며 `pnpm
 ## 코드 위치
 
 - `src/extension.ts`: 확장 활성화와 명령 등록
+- `src/data/`: 최상위 `GameData` 스키마(`types.ts`), 종별 도감(`species.ts`), 스테이지(`stages.ts`), 환경별 데이터셋(`game-data.ts`), 시나리오 프리셋(`scenarios.ts`)
 - `src/pet/pet-state.ts`: 상태 타입과 변경 규칙
 - `src/pet/pet-service.ts`: 상태 처리 흐름
 - `src/pet/pet-state-store.ts`: 영구 저장

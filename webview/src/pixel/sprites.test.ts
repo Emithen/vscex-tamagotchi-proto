@@ -33,12 +33,31 @@ describe('createSpriteLibrary', () => {
     expect(() => library.get('attack')).toThrow('애니메이션 "attack"을 찾지 못했습니다');
   });
 
-  it('번들된 manifest에서 모든 펫 애니메이션을 찾는다', () => {
+  it('번들된 manifest에서 모든 진화 단계의 펫 애니메이션과 프레임 규격을 찾는다', () => {
     const library = createSpriteLibrary('/sprites');
-    const names = ['idle', 'blink', 'eat', 'happy', 'hungry', 'attack', 'hit', 'faint', 'victory'];
+    const names = [
+      'idle',
+      'blink',
+      'eat',
+      'happy',
+      'hungry',
+      'attack',
+      'hit',
+      'faint',
+      'victory',
+    ] as const;
+    const expectedSizes = [
+      ['mudkip', 48],
+      ['marshtomp', 64],
+      ['swampert', 80],
+    ] as const;
 
-    for (const name of names) {
-      expect(() => library.get(name as Parameters<typeof library.get>[0])).not.toThrow();
+    for (const [speciesId, expectedSize] of expectedSizes) {
+      for (const name of names) {
+        const animation = library.get(name, speciesId);
+        expect(animation.frameWidth).toBe(expectedSize);
+        expect(animation.frameHeight).toBe(expectedSize);
+      }
     }
   });
 });

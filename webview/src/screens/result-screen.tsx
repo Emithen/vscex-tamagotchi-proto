@@ -21,11 +21,13 @@ export function ResultScreen({ battle, stage, onClaimReward }: ResultScreenProps
   return (
     <main class="screen result-screen">
       <p class="eyebrow">{stage.name} 결과</p>
-      <PixelSprite
-        className="pet-image result-image"
-        animation={sprites.get(view.animation)}
-        label={battle.pet.name}
-      />
+      <div class="pet-stage result-stage">
+        <PixelSprite
+          className="pet-image result-image"
+          animation={sprites.get(view.animation, battle.pet.id)}
+          label={battle.pet.name}
+        />
+      </div>
       <h2>{view.title}</h2>
       <p class="result-reward">
         획득 경험치 <strong>+{battle.experienceReward}</strong>

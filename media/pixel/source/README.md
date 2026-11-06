@@ -1,9 +1,10 @@
 # 픽셀 에셋 원본
 
-기본 펫 `물짱이`의 런타임 스프라이트(`mudkip-*`)는 포켓몬 블랙·화이트(Gen5) 배틀 스프라이트에서 파생했습니다.
+기본 펫과 진화형(`물짱이 → 늪짱이 → 대짱이`)의 런타임 스프라이트(`mudkip-*`, `marshtomp-*`, `swampert-*`)는 포켓몬 블랙·화이트(Gen5) 배틀 스프라이트에서 파생했습니다.
 
-- `mudkip-front-gen5.png`: 정적 정면 스프라이트 (96×96 캔버스, 14색). 팔레트 기준 원본입니다.
-- `mudkip-front-gen5.gif`: 정면 배틀 애니메이션 (43×49, 82프레임, 고유 프레임 57개). 포즈 원본입니다.
+- `mudkip-front-gen5.png` / `mudkip-front-gen5.gif`: 물짱이 원본 (`48×48` 프레임, 14색)
+- `marshtomp-front-gen5.png` / `marshtomp-front-gen5.gif`: 늪짱이 원본 (`64×64` 프레임, 15색)
+- `swampert-front-gen5.png` / `swampert-front-gen5.gif`: 대짱이 원본 (`80×80` 프레임, 16색)
 
 두 파일 모두 런타임에서 직접 사용하지 않습니다.
 

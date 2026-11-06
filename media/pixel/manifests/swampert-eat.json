@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "id": "swampert-eat",
+  "image": "../sprites/swampert-eat.png",
+  "frame": {
+    "width": 80,
+    "height": 80,
+    "columns": 3,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "eat": {
+      "frames": [0, 1, 0, 1, 2],
+      "fps": 6,
+      "loop": false
+    }
+  }
+}

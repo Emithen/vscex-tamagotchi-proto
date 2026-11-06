@@ -18,6 +18,7 @@ class TestBattleStore {
 
 class TestPetStore {
   state: PetState = {
+    speciesId: 'mudkip',
     name: '물짱이',
     fullness: 5,
     experience: 0,
@@ -84,7 +85,9 @@ suite('Battle Service', () => {
     await service.claimReward();
     await service.claimReward();
 
-    assert.strictEqual(petStore.state.experience, 10);
+    assert.strictEqual(petStore.state.speciesId, 'marshtomp');
+    assert.strictEqual(petStore.state.name, '늪짱이');
+    assert.strictEqual(petStore.state.experience, 0);
     assert.strictEqual(battleStore.battle?.rewardClaimed, true);
     assert.strictEqual(service.getBattle(), undefined);
   });
