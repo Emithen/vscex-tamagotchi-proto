@@ -3,7 +3,7 @@ import {
   DEV_TEST_SPECIES_CATALOG,
   PRODUCTION_SPECIES_CATALOG,
 } from './species';
-import { DEFAULT_STAGE_ID, createStagesCatalog } from './stages';
+import { DEFAULT_STAGE_ID, createFieldsCatalog, createStagesCatalog } from './stages';
 import type { BattleRules, CareRules, GameData } from './types';
 
 export const DEFAULT_CARE_RULES: CareRules = {
@@ -35,7 +35,8 @@ export const DEV_TEST_GAME_DATA: GameData = {
   battle: DEFAULT_BATTLE_RULES,
   stages: {
     defaultStageId: DEFAULT_STAGE_ID,
-    catalog: createStagesCatalog(DEV_TEST_SPECIES_CATALOG),
+    fields: createFieldsCatalog(),
+    catalog: createStagesCatalog(),
   },
 };
 
@@ -52,7 +53,8 @@ export const PRODUCTION_GAME_DATA: GameData = {
   battle: DEFAULT_BATTLE_RULES,
   stages: {
     defaultStageId: DEFAULT_STAGE_ID,
-    catalog: createStagesCatalog(PRODUCTION_SPECIES_CATALOG),
+    fields: createFieldsCatalog(),
+    catalog: createStagesCatalog(),
   },
 };
 

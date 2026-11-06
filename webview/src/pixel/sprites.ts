@@ -1,5 +1,8 @@
+import type { SpriteSetId } from '@extension/data/types';
 import { createContext } from 'preact';
 import { useContext } from 'preact/hooks';
+
+export type { SpriteSetId };
 
 export type SpriteManifest = {
   id: string;

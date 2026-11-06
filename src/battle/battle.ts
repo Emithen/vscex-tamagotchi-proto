@@ -1,10 +1,23 @@
 import { GAME_DATA } from '../data/game-data';
-import { BATTLE_VICTORY_EXPERIENCE, GRASSLAND_STAGE_ID } from '../data/stages';
-import type { BattleStageId, CombatStats, GameData, PetSpeciesId } from '../data/types';
+import {
+  BATTLE_FIELD_IDS,
+  BATTLE_STAGE_IDS,
+  BATTLE_VICTORY_EXPERIENCE,
+  GRASSLAND_STAGE_ID,
+} from '../data/stages';
+import type {
+  BattleFieldId,
+  BattleStageId,
+  CombatStats,
+  FieldData,
+  GameData,
+  PetSpeciesId,
+  SpriteSetId,
+} from '../data/types';
 import { isPetSpeciesId, type PetState } from '../pet/pet-state';
 
-export { BATTLE_VICTORY_EXPERIENCE, GRASSLAND_STAGE_ID };
-export type { BattleStageId, CombatStats };
+export { BATTLE_FIELD_IDS, BATTLE_STAGE_IDS, BATTLE_VICTORY_EXPERIENCE, GRASSLAND_STAGE_ID };
+export type { BattleFieldId, BattleStageId, CombatStats, FieldData, SpriteSetId };
 
 export const BASE_ATTACK_INTERVAL_MS = GAME_DATA.battle.baseAttackIntervalMs;
 export const MAX_BATTLE_ACTIONS = GAME_DATA.battle.maxActions;
@@ -12,6 +25,7 @@ export const MAX_BATTLE_ACTIONS = GAME_DATA.battle.maxActions;
 export type Combatant = {
   id: string;
   name: string;
+  spriteId?: SpriteSetId;
   stats: CombatStats;
 };
 
@@ -43,18 +57,21 @@ export type BattleRecord = BattleSimulation & {
 export const MUDKIP_COMBATANT: Combatant = {
   id: GAME_DATA.species.catalog.mudkip.id,
   name: GAME_DATA.species.catalog.mudkip.name,
+  spriteId: GAME_DATA.species.catalog.mudkip.id,
   stats: GAME_DATA.species.catalog.mudkip.stats,
 };
 
 export const MARSHTOMP_COMBATANT: Combatant = {
   id: GAME_DATA.species.catalog.marshtomp.id,
   name: GAME_DATA.species.catalog.marshtomp.name,
+  spriteId: GAME_DATA.species.catalog.marshtomp.id,
   stats: GAME_DATA.species.catalog.marshtomp.stats,
 };
 
 export const SWAMPERT_COMBATANT: Combatant = {
   id: GAME_DATA.species.catalog.swampert.id,
   name: GAME_DATA.species.catalog.swampert.name,
+  spriteId: GAME_DATA.species.catalog.swampert.id,
   stats: GAME_DATA.species.catalog.swampert.stats,
 };
 
@@ -78,12 +95,15 @@ export function createPetCombatant(
   return {
     id: base.id,
     name: pet.name,
+    spriteId: base.id,
     stats: base.stats,
   };
 }
 
 export type BattleStage = {
   id: BattleStageId;
+  fieldId: BattleFieldId;
+  stageNumber: 1 | 2 | 3;
   name: string;
   enemy: Combatant;
   victoryExperience: number;
@@ -91,8 +111,14 @@ export type BattleStage = {
 
 export const GRASSLAND_STAGE: BattleStage = {
   ...GAME_DATA.stages.catalog[GRASSLAND_STAGE_ID],
-  enemy: MUDKIP_COMBATANT,
 };
+
+export function isBattleStageId(
+  value: unknown,
+  data: GameData = GAME_DATA,
+): value is BattleStageId {
+  return typeof value === 'string' && value in data.stages.catalog;
+}
 
 export function getBattleStage(stageId: string, data: GameData = GAME_DATA): BattleStage {
   const stage = data.stages.catalog[stageId as BattleStageId];
@@ -108,6 +134,14 @@ export function getBattleStage(stageId: string, data: GameData = GAME_DATA): Bat
   }
 
   return stage;
+}
+
+export function getBattleFields(data: GameData = GAME_DATA): FieldData[] {
+  return BATTLE_FIELD_IDS.map((fieldId) => data.stages.fields[fieldId]);
+}
+
+export function getBattleStages(data: GameData = GAME_DATA): BattleStage[] {
+  return BATTLE_STAGE_IDS.map((stageId) => getBattleStage(stageId, data));
 }
 
 export function calculateDamage(attacker: CombatStats, defender: CombatStats): number {

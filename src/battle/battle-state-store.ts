@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { GRASSLAND_STAGE_ID, type BattleAction, type BattleRecord, type Combatant } from './battle';
+import { isBattleStageId, type BattleAction, type BattleRecord, type Combatant } from './battle';
 
 const BATTLE_STATE_KEY = 'tamagotchi.battleState';
 
@@ -25,7 +25,7 @@ function isBattleRecord(value: unknown): value is BattleRecord {
 
   return (
     typeof battle.id === 'string' &&
-    battle.stageId === GRASSLAND_STAGE_ID &&
+    isBattleStageId(battle.stageId) &&
     typeof battle.startedAt === 'number' &&
     Number.isFinite(battle.startedAt) &&
     isCombatant(battle.pet) &&

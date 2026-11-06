@@ -107,7 +107,7 @@ HTML은 View 생성 시 한 번만 로드하고 Extension Host는 상태 snapsho
 
 ### 4. 전투
 
-- [ ] 스테이지 배경과 캐릭터 기준점
+- [x] 스테이지 배경과 캐릭터 기준점 (5개 지형 필드 Canvas 픽셀 배경 및 타원형 전투 발판)
 - [x] attack, hit, faint, victory 애니메이션과 전투 행동 재생 연결
 - [x] 좌표 기반 픽셀 HP 게이지, 데미지 숫자, 타격 효과
 - [ ] 저장된 `startedAt`과 행동 시각으로 중간 재생 복원

@@ -3,6 +3,7 @@ import { BATTLE_RESULT_REVEAL_DELAY_MS } from '@extension/shared/protocol';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { getHpFillPixels, getHpLevel } from '../battle/hp';
 import { PixelSprite } from '../components/pixel-sprite';
+import { TerrainBackdrop } from '../components/terrain-backdrop';
 import { useSprites } from '../pixel/sprites';
 
 const BATTLE_HIT_DELAY_MS = 125;
@@ -116,10 +117,15 @@ export function BattleScreen({ battle, stage, onFinished }: BattleScreenProps) {
   }, []);
 
   return (
-    <main class="screen battle-screen">
+    <main class="screen battle-screen" data-field={stage.fieldId}>
       <p class="eyebrow">{stage.name}</p>
       <h2>전투 진행 중</h2>
       <div class="combatants">
+        <TerrainBackdrop
+          fieldId={stage.fieldId}
+          mode="battle"
+          className="battle-terrain-backdrop"
+        />
         <CombatantPanel
           side="pet"
           label="내 펫"
@@ -159,21 +165,20 @@ function CombatantPanel({
   onAnimationComplete,
 }: CombatantPanelProps) {
   const sprites = useSprites();
+  const spriteSet = combatant.spriteId ?? combatant.id;
+  const animation = sprites.get(view.animation, spriteSet);
   const maxHp = combatant.stats.maxHp;
   const hpLevel = getHpLevel(view.hp, maxHp);
   const hpClass = hpLevel === 'good' ? 'pixel-hp' : `pixel-hp is-${hpLevel}`;
+  const baseImageClass = `combatant-image combatant-image--${animation.frameWidth} combatant-image--${spriteSet}`;
 
   return (
     <section class={`combatant combatant--${side}`}>
       <span class="combatant-label">{label}</span>
       <div class="combatant-stage">
         <PixelSprite
-          className={
-            view.isHit
-              ? `combatant-image combatant-image--${combatant.id} is-hit`
-              : `combatant-image combatant-image--${combatant.id}`
-          }
-          animation={sprites.get(view.animation, combatant.id)}
+          className={view.isHit ? `${baseImageClass} is-hit` : baseImageClass}
+          animation={animation}
           playKey={view.playKey}
           label={`${label} ${combatant.name}`}
           onComplete={onAnimationComplete}

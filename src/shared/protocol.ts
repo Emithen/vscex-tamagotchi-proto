@@ -1,4 +1,11 @@
-import { getBattleStage, type BattleRecord, type BattleStage } from '../battle/battle';
+import {
+  getBattleFields,
+  getBattleStage,
+  getBattleStages,
+  type BattleRecord,
+  type BattleStage,
+  type FieldData,
+} from '../battle/battle';
 import { GAME_DATA } from '../data/game-data';
 import type { GameData } from '../data/types';
 import type { PetState } from '../pet/pet-state';
@@ -9,8 +16,12 @@ export const BATTLE_RESULT_REVEAL_DELAY_MS = GAME_DATA.battle.resultRevealDelayM
 /** Extension Host가 Webview에 보내는 화면 상태이다. */
 export type ViewSnapshot = {
   pet: PetState;
-  /** 홈 화면에서 선택할 수 있는 스테이지 */
+  /** 기본 선택 스테이지 */
   stage: BattleStage;
+  /** 선택 가능한 전체 필드 목록 (5필드) */
+  fields: FieldData[];
+  /** 선택 가능한 전체 스테이지 목록 (15스테이지) */
+  stages: BattleStage[];
   battle?: {
     record: BattleRecord;
     stage: BattleStage;
@@ -36,6 +47,8 @@ export function createViewSnapshot(
   return {
     pet,
     stage: getBattleStage(data.stages.defaultStageId, data),
+    fields: getBattleFields(data),
+    stages: getBattleStages(data),
     battle: battle ? { record: battle, stage: getBattleStage(battle.stageId, data) } : undefined,
   };
 }

@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "id": "seedot",
+  "image": "../sprites/seedot.png",
+  "frame": {
+    "width": 48,
+    "height": 48,
+    "columns": 11,
+    "rows": 1
+  },
+  "palette": {
+    "maxOpaqueColors": 16,
+    "binaryAlpha": true
+  },
+  "animations": {
+    "idle": {
+      "frames": [0, 1, 2, 1],
+      "fps": 4,
+      "loop": true
+    },
+    "attack": {
+      "frames": [0, 3, 4, 0],
+      "fps": 8,
+      "loop": false
+    },
+    "hit": {
+      "frames": [5, 6, 7, 0],
+      "fps": 8,
+      "loop": false
+    },
+    "faint": {
+      "frames": [0, 8, 9, 10],
+      "fps": 6,
+      "loop": false
+    }
+  }
+}

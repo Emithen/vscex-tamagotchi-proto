@@ -1,0 +1,19 @@
+{
+  "id": "aggron",
+  "maxOpaqueColors": 16,
+  "colors": [
+    "#000000",
+    "#52524a",
+    "#5a5a62",
+    "#6a6a6a",
+    "#6abdff",
+    "#838394",
+    "#8b8b8b",
+    "#9c3141",
+    "#a4a4ac",
+    "#acacac",
+    "#cdcdcd",
+    "#de5252",
+    "#ffffff"
+  ]
+}

@@ -1,3 +1,4 @@
+import { getBattleStages } from '@extension/battle/battle';
 import { describe, expect, it } from 'vitest';
 import { createSpriteLibrary, type SpriteManifest } from './sprites';
 
@@ -55,6 +56,22 @@ describe('createSpriteLibrary', () => {
     for (const [speciesId, expectedSize] of expectedSizes) {
       for (const name of names) {
         const animation = library.get(name, speciesId);
+        expect(animation.frameWidth).toBe(expectedSize);
+        expect(animation.frameHeight).toBe(expectedSize);
+      }
+    }
+  });
+
+  it('번들된 manifest에서 15개 스테이지 적 포켓몬의 전투 애니메이션을 모두 찾는다', () => {
+    const library = createSpriteLibrary('/sprites');
+    const battleAnimations = ['idle', 'attack', 'hit', 'faint'] as const;
+    const expectedSizeByStageNumber = { 1: 48, 2: 64, 3: 80 } as const;
+
+    for (const stage of getBattleStages()) {
+      const spriteSet = stage.enemy.spriteId ?? stage.enemy.id;
+      const expectedSize = expectedSizeByStageNumber[stage.stageNumber];
+      for (const name of battleAnimations) {
+        const animation = library.get(name, spriteSet);
         expect(animation.frameWidth).toBe(expectedSize);
         expect(animation.frameHeight).toBe(expectedSize);
       }

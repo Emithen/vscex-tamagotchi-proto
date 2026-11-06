@@ -1,3 +1,4 @@
+import type { BattleStageId } from '@extension/battle/battle';
 import type { ViewSnapshot } from '@extension/shared/protocol';
 import { useEffect, useReducer, useState } from 'preact/hooks';
 import type { HostBridge } from './bridge';
@@ -70,11 +71,15 @@ function Screen({ snapshot, bridge, onBattleFinished }: ScreenProps) {
 
 function HomeScreens({ snapshot, bridge }: Omit<ScreenProps, 'onBattleFinished'>) {
   const [view, setView] = useState<'home' | 'stage'>('home');
+  const [selectedStageId, setSelectedStageId] = useState<BattleStageId>(snapshot.stage.id);
 
   if (view === 'stage') {
     return (
       <StageScreen
-        stage={snapshot.stage}
+        fields={snapshot.fields}
+        stages={snapshot.stages}
+        selectedStageId={selectedStageId}
+        onSelectStage={setSelectedStageId}
         onStartBattle={(stageId) => bridge.postMessage({ type: 'startBattle', stageId })}
         onBack={() => setView('home')}
       />

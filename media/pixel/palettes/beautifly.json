@@ -1,0 +1,22 @@
+{
+  "id": "beautifly",
+  "maxOpaqueColors": 16,
+  "colors": [
+    "#000000",
+    "#393931",
+    "#525252",
+    "#52a4ff",
+    "#626262",
+    "#6a6262",
+    "#8bd5ff",
+    "#a44a41",
+    "#a48341",
+    "#acaca4",
+    "#e6dede",
+    "#eeac5a",
+    "#f62939",
+    "#ffd529",
+    "#ffffee",
+    "#ffffff"
+  ]
+}

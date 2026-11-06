@@ -1,0 +1,21 @@
+{
+  "id": "crawdaunt",
+  "maxOpaqueColors": 16,
+  "colors": [
+    "#000000",
+    "#18416a",
+    "#4173ac",
+    "#529cf6",
+    "#625a5a",
+    "#7b5a31",
+    "#8b2929",
+    "#b4aca4",
+    "#cd3131",
+    "#dedede",
+    "#ee5252",
+    "#f68b8b",
+    "#f69c18",
+    "#ffe65a",
+    "#ffffff"
+  ]
+}

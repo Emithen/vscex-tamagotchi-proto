@@ -1,0 +1,18 @@
+{
+  "id": "corphish",
+  "maxOpaqueColors": 16,
+  "colors": [
+    "#101010",
+    "#6a3941",
+    "#836a52",
+    "#a43920",
+    "#ac9c83",
+    "#cdb494",
+    "#cdcdcd",
+    "#e65208",
+    "#e6e6cd",
+    "#f67352",
+    "#ff9c94",
+    "#ffffff"
+  ]
+}

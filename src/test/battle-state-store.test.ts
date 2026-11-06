@@ -4,6 +4,8 @@ import { BattleStateStore } from '../battle/battle-state-store';
 import {
   GRASSLAND_STAGE,
   MUDKIP_COMBATANT,
+  SWAMPERT_COMBATANT,
+  getBattleStage,
   simulateBattle,
   type BattleRecord,
 } from '../battle/battle';
@@ -39,15 +41,16 @@ class TestMemento implements vscode.Memento {
   }
 }
 
-function createBattle(): BattleRecord {
+function createBattle(stageId = GRASSLAND_STAGE.id, pet = MUDKIP_COMBATANT): BattleRecord {
+  const stage = getBattleStage(stageId);
   return {
-    ...simulateBattle(MUDKIP_COMBATANT, GRASSLAND_STAGE.enemy),
+    ...simulateBattle(pet, stage.enemy),
     id: 'battle-1',
-    stageId: GRASSLAND_STAGE.id,
+    stageId: stage.id,
     startedAt: 1_000,
-    pet: MUDKIP_COMBATANT,
-    enemy: GRASSLAND_STAGE.enemy,
-    experienceReward: GRASSLAND_STAGE.victoryExperience,
+    pet,
+    enemy: stage.enemy,
+    experienceReward: stage.victoryExperience,
     rewardClaimed: false,
   };
 }
@@ -58,6 +61,13 @@ suite('Battle State Store', () => {
     const store = new BattleStateStore(new TestMemento({ [BATTLE_STATE_KEY]: battle }));
 
     assert.deepStrictEqual(store.load(), battle);
+  });
+
+  test('상위 필드 스테이지의 전투 상태도 정상적으로 불러온다', () => {
+    const volcanoBattle = createBattle('volcano-3', SWAMPERT_COMBATANT);
+    const store = new BattleStateStore(new TestMemento({ [BATTLE_STATE_KEY]: volcanoBattle }));
+
+    assert.deepStrictEqual(store.load(), volcanoBattle);
   });
 
   test('스키마와 맞지 않는 전투 상태를 무시한다', () => {
