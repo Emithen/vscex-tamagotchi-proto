@@ -54,7 +54,7 @@ export const GAME_SCENARIOS: Record<GameScenarioId, GameScenario> = {
   },
   marshtomp: {
     id: 'marshtomp',
-    label: '2단계 늪짱이 (EXP 0/20)',
+    label: '2단계 늪짱이 (EXP 0/500)',
     gameData: DEV_TEST_GAME_DATA,
     createInitialState: (now = Date.now()) => ({
       pet: {
@@ -67,14 +67,14 @@ export const GAME_SCENARIOS: Record<GameScenarioId, GameScenario> = {
   },
   'marshtomp-near-evolution': {
     id: 'marshtomp-near-evolution',
-    label: '진화 직전 늪짱이 (EXP 10/20, 1승 시 대짱이)',
+    label: '진화 직전 늪짱이 (EXP 490/500, 1승 시 대짱이)',
     gameData: DEV_TEST_GAME_DATA,
     createInitialState: (now = Date.now()) => ({
       pet: {
         ...createInitialPetState(now, DEV_TEST_GAME_DATA),
         speciesId: 'marshtomp',
         name: DEV_TEST_GAME_DATA.species.catalog.marshtomp.name,
-        experience: 10,
+        experience: 490,
       },
     }),
   },

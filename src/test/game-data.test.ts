@@ -43,7 +43,7 @@ suite('Game Data & Scenarios', () => {
   test('시나리오 프리셋으로 원하는 초기 상태를 생성한다', () => {
     const nearEvolution = getGameScenario('marshtomp-near-evolution').createInitialState(2_000);
     assert.strictEqual(nearEvolution.pet.speciesId, 'marshtomp');
-    assert.strictEqual(nearEvolution.pet.experience, 10);
+    assert.strictEqual(nearEvolution.pet.experience, PROD_MARSHTOMP_EVOLUTION_EXPERIENCE - 10);
 
     const evolved = addPetExperience(nearEvolution.pet, 10, DEV_TEST_GAME_DATA);
     assert.strictEqual(evolved.speciesId, 'swampert');

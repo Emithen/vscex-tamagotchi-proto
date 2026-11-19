@@ -6,8 +6,12 @@
   --pixel-scale: var(--pixel-scale-override, var(--pixel-auto-scale));
   --pixel-unit: 4px;
   --pixel-border: 1px;
-  --pixel-surface: var(--vscode-sideBar-background);
-  --pixel-surface-raised: var(--vscode-editorWidget-background, var(--vscode-sideBar-background));
+  --pixel-surface: color-mix(
+    in srgb,
+    var(--vscode-editorWidget-background, var(--vscode-sideBar-background)) 92%,
+    var(--vscode-foreground) 8%
+  );
+  --pixel-surface-raised: color-mix(in srgb, var(--pixel-surface) 92%, var(--vscode-foreground) 8%);
   --pixel-border-color: var(--vscode-widget-border, var(--vscode-contrastBorder, #808080));
   --pixel-muted: var(--vscode-descriptionForeground);
   --pixel-accent: var(--vscode-button-background);
@@ -65,10 +69,7 @@ button {
   height: calc(var(--pixel-design-height) * var(--pixel-scale));
   overflow: hidden;
   background: var(--pixel-surface);
-  box-shadow:
-    inset 0 0 0 calc(var(--pixel-border) * var(--pixel-scale)) var(--pixel-border-color),
-    calc(var(--pixel-unit) * var(--pixel-scale)) calc(var(--pixel-unit) * var(--pixel-scale)) 0
-      color-mix(in srgb, var(--vscode-foreground) 20%, transparent);
+  box-shadow: inset 0 0 0 calc(var(--pixel-border) * var(--pixel-scale)) var(--pixel-border-color);
 }
 
 .pixel-canvas {

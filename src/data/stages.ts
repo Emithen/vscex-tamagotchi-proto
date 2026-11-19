@@ -34,31 +34,31 @@ export function createFieldsCatalog(): Record<BattleFieldId, FieldData> {
   return {
     grassland: {
       id: 'grassland',
-      name: '초원',
+      name: '너도밤나무숲',
       themeTypes: '풀·벌레',
       stageIds: ['grassland-1', 'grassland-2', 'grassland-3'],
     },
     beach: {
       id: 'beach',
-      name: '해변',
+      name: '물결만',
       themeTypes: '물·비행',
       stageIds: ['beach-1', 'beach-2', 'beach-3'],
     },
     marsh: {
       id: 'marsh',
-      name: '진흙 습지',
+      name: '설화의 습지초원',
       themeTypes: '독·습지',
       stageIds: ['marsh-1', 'marsh-2', 'marsh-3'],
     },
     cave: {
       id: 'cave',
-      name: '바위 동굴',
+      name: '천관산',
       themeTypes: '바위·강철',
       stageIds: ['cave-1', 'cave-2', 'cave-3'],
     },
     volcano: {
       id: 'volcano',
-      name: '화산 지대',
+      name: '굴뚝산',
       themeTypes: '불꽃·땅',
       stageIds: ['volcano-1', 'volcano-2', 'volcano-3'],
     },
@@ -71,7 +71,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'grassland-1',
       fieldId: 'grassland',
       stageNumber: 1,
-      name: '초원 1',
+      name: '너도밤나무숲 1',
       enemy: {
         id: 'seedot',
         name: '도토링',
@@ -85,7 +85,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'grassland-2',
       fieldId: 'grassland',
       stageNumber: 2,
-      name: '초원 2',
+      name: '너도밤나무숲 2',
       enemy: {
         id: 'beautifly',
         name: '뷰티플라이',
@@ -99,7 +99,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'grassland-3',
       fieldId: 'grassland',
       stageNumber: 3,
-      name: '초원 3',
+      name: '너도밤나무숲 3',
       enemy: {
         id: 'breloom',
         name: '버섯모',
@@ -113,7 +113,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'beach-1',
       fieldId: 'beach',
       stageNumber: 1,
-      name: '해변 1',
+      name: '물결만 1',
       enemy: {
         id: 'wingull',
         name: '갈모매',
@@ -127,7 +127,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'beach-2',
       fieldId: 'beach',
       stageNumber: 2,
-      name: '해변 2',
+      name: '물결만 2',
       enemy: {
         id: 'corphish',
         name: '가재군',
@@ -141,7 +141,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'beach-3',
       fieldId: 'beach',
       stageNumber: 3,
-      name: '해변 3',
+      name: '물결만 3',
       enemy: {
         id: 'crawdaunt',
         name: '가재장군',
@@ -155,7 +155,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'marsh-1',
       fieldId: 'marsh',
       stageNumber: 1,
-      name: '진흙 습지 1',
+      name: '설화의 습지초원 1',
       enemy: {
         id: 'gulpin',
         name: '꼴깍몬',
@@ -169,7 +169,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'marsh-2',
       fieldId: 'marsh',
       stageNumber: 2,
-      name: '진흙 습지 2',
+      name: '설화의 습지초원 2',
       enemy: {
         id: 'seviper',
         name: '세비퍼',
@@ -183,7 +183,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'marsh-3',
       fieldId: 'marsh',
       stageNumber: 3,
-      name: '진흙 습지 3',
+      name: '설화의 습지초원 3',
       enemy: {
         id: 'whiscash',
         name: '메깅',
@@ -197,7 +197,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'cave-1',
       fieldId: 'cave',
       stageNumber: 1,
-      name: '바위 동굴 1',
+      name: '천관산 1',
       enemy: {
         id: 'aron',
         name: '가보리',
@@ -211,7 +211,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'cave-2',
       fieldId: 'cave',
       stageNumber: 2,
-      name: '바위 동굴 2',
+      name: '천관산 2',
       enemy: {
         id: 'nosepass',
         name: '코코파스',
@@ -225,7 +225,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'cave-3',
       fieldId: 'cave',
       stageNumber: 3,
-      name: '바위 동굴 3',
+      name: '천관산 3',
       enemy: {
         id: 'aggron',
         name: '보스로라',
@@ -239,7 +239,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'volcano-1',
       fieldId: 'volcano',
       stageNumber: 1,
-      name: '화산 지대 1',
+      name: '굴뚝산 1',
       enemy: {
         id: 'numel',
         name: '둔타',
@@ -253,7 +253,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'volcano-2',
       fieldId: 'volcano',
       stageNumber: 2,
-      name: '화산 지대 2',
+      name: '굴뚝산 2',
       enemy: {
         id: 'torkoal',
         name: '코터스',
@@ -267,7 +267,7 @@ export function createStagesCatalog(): Record<BattleStageId, StageData> {
       id: 'volcano-3',
       fieldId: 'volcano',
       stageNumber: 3,
-      name: '화산 지대 3',
+      name: '굴뚝산 3',
       enemy: {
         id: 'groudon',
         name: '그란돈',

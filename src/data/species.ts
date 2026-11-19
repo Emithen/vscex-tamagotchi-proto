@@ -2,13 +2,15 @@ import type { PetSpeciesId, SpeciesData } from './types';
 
 export const DEFAULT_SPECIES_ID: PetSpeciesId = 'mudkip';
 
-/** 개발·테스트 환경용 진화 요구 경험치 (빠른 검증용: 1승 → 늪짱이, 2승 → 대짱이) */
-export const DEV_MUDKIP_EVOLUTION_EXPERIENCE = 10;
-export const DEV_MARSHTOMP_EVOLUTION_EXPERIENCE = 20;
+/** 기본 진화 요구 경험치 (물짱이 150 → 늪짱이 500 → 대짱이 MAX) */
+export const DEFAULT_MUDKIP_EVOLUTION_EXPERIENCE = 150;
+export const DEFAULT_MARSHTOMP_EVOLUTION_EXPERIENCE = 500;
 
-/** 프로덕션(본편) 기준 진화 요구 경험치 */
-export const PROD_MUDKIP_EVOLUTION_EXPERIENCE = 50;
-export const PROD_MARSHTOMP_EVOLUTION_EXPERIENCE = 100;
+/** 개발·테스트 및 프로덕션 공통 진화 요구 경험치 */
+export const DEV_MUDKIP_EVOLUTION_EXPERIENCE = DEFAULT_MUDKIP_EVOLUTION_EXPERIENCE;
+export const DEV_MARSHTOMP_EVOLUTION_EXPERIENCE = DEFAULT_MARSHTOMP_EVOLUTION_EXPERIENCE;
+export const PROD_MUDKIP_EVOLUTION_EXPERIENCE = DEFAULT_MUDKIP_EVOLUTION_EXPERIENCE;
+export const PROD_MARSHTOMP_EVOLUTION_EXPERIENCE = DEFAULT_MARSHTOMP_EVOLUTION_EXPERIENCE;
 
 /**
  * 진화 요구 경험치 설정만 주입받아 종별 카탈로그를 생성한다.

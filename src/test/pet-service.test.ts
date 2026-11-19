@@ -1,6 +1,11 @@
 import * as assert from 'node:assert/strict';
 import { PetService } from '../pet/pet-service';
-import { FULLNESS_DECAY_INTERVAL_MS, MAX_FULLNESS, type PetState } from '../pet/pet-state';
+import {
+  FULLNESS_DECAY_INTERVAL_MS,
+  MAX_FULLNESS,
+  MUDKIP_EVOLUTION_EXPERIENCE,
+  type PetState,
+} from '../pet/pet-state';
 
 class TestPetStateStore {
   saveCount = 0;
@@ -79,7 +84,9 @@ suite('Pet Service', () => {
   });
 
   test('전투 경험치를 같은 전투에서 한 번만 지급하고 진화 조건 충족 시 진화한다', async () => {
-    const store = new TestPetStateStore(createState());
+    const store = new TestPetStateStore(
+      createState({ experience: MUDKIP_EVOLUTION_EXPERIENCE - 10 }),
+    );
     const service = new PetService(store, () => 0);
 
     const rewardedState = await service.addBattleExperience('battle-1', 10);
